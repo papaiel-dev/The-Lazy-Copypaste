@@ -1,0 +1,15 @@
+# Arquivo para ignorar arquivos e pastas no Git
+
+# Pasta de dependências do Node.js
+# Esta pasta pode ser recriada a qualquer momento com o comando 'npm install'
+node_modules/
+
+# Arquivo do banco de dados
+# É uma boa prática não versionar o banco de dados diretamente com o código
+*.db
+
+# Arquivos de log
+*.log
+
+# Arquivos de ambiente (boa prática para o futuro)
+.env

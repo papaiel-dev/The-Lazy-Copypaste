@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Feedback</title>
+    <link rel="stylesheet" href="/style.css"> 
+</head>
+<body>
+    <div class="container">
+        <h1 id="page-title">Criar Novo Feedback</h1>
+        <div id="status-message" class="status-message" style="display: none;"></div>
+        <form id="editForm">
+            <div class="form-group">
+                <label for="title">Título</label>
+                <input type="text" id="title" placeholder="Ex: Elogios sobre Atendimento" required>
+            </div>
+            <div class="form-group">
+                <label for="text">Texto do Feedback</label>
+                <textarea id="text" placeholder="Digite o feedback aqui..." required></textarea>
+            </div>
+            <div class="form-actions">
+                <button type="button" id="backButton" class="btn-secondary">Voltar</button>
+                <button type="submit" id="saveButton">Salvar</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const form = document.getElementById('editForm');
+            const pageTitle = document.getElementById('page-title');
+            const titleInput = document.getElementById('title');
+            const textInput = document.getElementById('text');
+            const backButton = document.getElementById('backButton');
+            const saveButton = document.getElementById('saveButton');
+            const statusMessage = document.getElementById('status-message');
+            const pathParts = window.location.pathname.split('/');
+            const feedbackId = pathParts[2];
+            const isEditing = feedbackId && !isNaN(feedbackId);
+            const showStatusMessage = (message, isError = false) => {
+                statusMessage.textContent = message;
+                statusMessage.className = isError ? 'status-message error' : 'status-message success';
+                statusMessage.style.display = 'block';
+                if (isError) {
+                    setTimeout(() => {
+                        statusMessage.style.display = 'none';
+                    }, 4000);
+                }
+            };
+            if (isEditing) {
+                pageTitle.textContent = 'Editar Feedback';
+                try {
+                    const response = await fetch(`/api/feedbacks/${feedbackId}`);
+                    if (!response.ok) throw new Error('Feedback não encontrado para edição.');
+                    const feedback = await response.json();
+                    titleInput.value = feedback.title;
+                    textInput.value = feedback.text;
+                } catch (error) {
+                    alert(error.message);
+                    window.location.href = '/manage.html';
+                }
+            }
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                saveButton.disabled = true;
+                saveButton.textContent = 'Salvando...';
+                const url = isEditing ? `/api/feedbacks/${feedbackId}` : '/api/feedbacks';
+                const method = isEditing ? 'PUT' : 'POST';
+                try {
+                    const response = await fetch(url, {
+                        method: method,
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            title: titleInput.value.trim(),
+                            text: textInput.value.trim()
+                        })
+                    });
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || `Erro ${response.status}`);
+                    }
+                    const successMsg = isEditing ? 'Feedback atualizado com sucesso!' : 'Feedback criado com sucesso!';
+                    showStatusMessage(successMsg);
+                    setTimeout(() => {
+                        window.location.href = '/manage.html';
+                    }, 2000); 
+                } catch (error) {
+                    showStatusMessage(`Falha ao Salvar: ${error.message}`, true);
+                    saveButton.disabled = false;
+                    saveButton.textContent = 'Salvar';
+                }
+            });
+            backButton.addEventListener('click', () => {
+                window.location.href = '/manage.html';
+            });
+        });
+    </script>
+</body>
+</html>

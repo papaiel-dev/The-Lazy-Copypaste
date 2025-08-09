@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscar Feedbacks</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Buscar Feedbacks</h1>
+            <a href="/" class="btn-secondary">Voltar ao Início</a>
+        </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Digite o título ou número do feedback...">
+            <div id="suggestions-box" class="suggestions-box"></div>
+        </div>
+        <hr>
+        <div id="feedback-display" class="feedback-display-box" style="display: none;">
+            <div class="display-header">
+                <h2 id="feedback-title"></h2>
+                <button id="close-view-btn" class="close-btn" title="Fechar">&times;</button>
+            </div>
+            <p id="feedback-text"></p>
+            <div class="button-wrapper">
+                <button id="copy-button" class="copy-btn">Copiar Texto</button>
+            </div>
+        </div>
+    </div>
+    <script src="search.js"></script>
+</body>
+</html>
