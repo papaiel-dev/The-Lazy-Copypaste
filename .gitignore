@@ -11,5 +11,5 @@ node_modules/
 # Arquivos de log
 *.log
 
-# Arquivos de ambiente (boa prática para o futuro)
+# Arquivos de ambiente com segredos
 .env
