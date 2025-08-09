@@ -3,12 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Feedback Manager - Início</title>
+    <title>Dashboard - Feedback Manager</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="container home-container">
-        <h1>Bem-vindo ao Gerenciador de Feedbacks</h1>
+<body class="app-view">
+    <div class="container">
+        <header class="header">
+            <h1>Meu Dashboard</h1>
+            <div id="user-info" style="display: none;">
+                <span id="user-email"></span>
+                <button id="logout-btn" class="btn-secondary">Sair</button>
+            </div>
+        </header>
+
         <p>Escolha uma opção para começar:</p>
         <div class="home-actions">
             <a href="/search.html" class="action-card">
@@ -21,5 +31,6 @@
             </a>
         </div>
     </div>
+    <script src="dashboard.js"></script>
 </body>
 </html>

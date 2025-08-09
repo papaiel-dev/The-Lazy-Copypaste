@@ -6,7 +6,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderFeedbacks = (feedbacks) => {
         feedbackContainer.innerHTML = '';
         if (feedbacks.length === 0) {
-            feedbackContainer.innerHTML = '<p>Nenhum feedback encontrado.</p>';
+            const emptyStateHTML = `
+                <div class="empty-state">
+                    <h2>Nenhum feedback por aqui ainda!</h2>
+                    <p>Que tal começar cadastrando seu primeiro feedback?</p>
+                    <a href="/edit" class="btn-primary">Criar meu primeiro feedback</a>
+                </div>
+            `;
+            feedbackContainer.innerHTML = emptyStateHTML;
             return;
         }
 

@@ -10,8 +10,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let debounceTimer;
 
-    const renderSuggestions = (feedbacks) => {
+    // Função de renderização agora lida com o estado vazio
+    const renderSuggestions = (feedbacks, query = '') => {
         suggestionsBox.innerHTML = ''; 
+        displayBox.style.display = 'none'; // Sempre esconde o display ao renderizar a lista
+        
         if (feedbacks.length > 0) {
             suggestionsBox.style.display = 'block';
             feedbacks.forEach(fb => {
@@ -22,7 +25,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 suggestionsBox.appendChild(suggestionItem);
             });
         } else {
-            suggestionsBox.style.display = 'none';
+            // Se não houver feedbacks, mostra uma mensagem de estado vazio
+            suggestionsBox.style.display = 'block'; // Mostra a caixa para conter a mensagem
+            let emptyStateHTML = '';
+
+            if (query) {
+                // Mensagem para quando uma BUSCA não retorna nada
+                emptyStateHTML = `
+                    <div class="empty-state-search">
+                        <h3>Nenhum resultado encontrado para "${query}"</h3>
+                        <p>Tente refinar seus termos de busca.</p>
+                    </div>
+                `;
+            } else {
+                // Mensagem para quando NÃO HÁ NENHUM FEEDBACK CADASTRADO
+                emptyStateHTML = `
+                    <div class="empty-state">
+                        <h2>Nenhum feedback por aqui ainda!</h2>
+                        <p>Vá para a área de gerenciamento para criar seu primeiro feedback.</p>
+                        <a href="/manage.html" class="btn-primary">Gerenciar Feedbacks</a>
+                    </div>
+                `;
+            }
+            suggestionsBox.innerHTML = emptyStateHTML;
         }
     };
     
@@ -34,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch(`/api/feedbacks?search=${encodeURIComponent(query)}`);
             const { feedbacks } = await response.json();
-            renderSuggestions(feedbacks);
+            renderSuggestions(feedbacks, query);
         } catch (error) {
             console.error('Erro ao buscar sugestões:', error);
         }
@@ -56,7 +81,6 @@ document.addEventListener('DOMContentLoaded', () => {
         displayBox.style.display = 'block';
         suggestionsBox.style.display = 'none';
         searchInput.value = '';
-
         copyButton.onclick = () => {
             navigator.clipboard.writeText(feedback.text);
             copyButton.textContent = 'Copiado!';
