@@ -2,6 +2,8 @@
 
 **[Acesse a Aplicação Ao Vivo!](https://the-lazy-copypaste-grwf.vercel.app/)** 🚀
 
+*(Por favor, verifique se este é o seu link final da Vercel e ajuste se necessário)*
+
 ---
 
 Uma aplicação web completa e multiusuário, construída com uma arquitetura moderna usando um frontend estático e o Supabase como Backend-as-a-Service (BaaS). Projetada para permitir que múltiplos usuários cadastrem, gerenciem e copiem textos e snippets de forma segura e eficiente, com os dados de cada usuário sendo completamente isolados através de Row-Level Security.
@@ -10,7 +12,7 @@ Uma aplicação web completa e multiusuário, construída com uma arquitetura mo
 
 -   ✅ **Publicação Online:** Aplicação publicada na nuvem através da Vercel, com deploy contínuo a partir do GitHub.
 -   ✅ **Autenticação Completa e Segura:**
-    -   Sistema de Cadastro e Login via modal, sem recarregar a página.
+    -   Sistema de Cadastro e Login via modal.
     -   Fluxo de **Recuperação de Senha** com envio de e-mail e página de redefinição.
     -   Gerenciamento de sessão seguro utilizando o sistema nativo do Supabase.
 -   ✅ **Gerenciamento de Conta de Usuário (LGPD):**
@@ -41,11 +43,10 @@ Uma aplicação web completa e multiusuário, construída com uma arquitetura mo
 
 ## 🔧 Como Rodar o Projeto Localmente
 
-Como a aplicação online é um site estático com funções serverless, usamos um servidor de desenvolvimento simples para rodar localmente.
+Como a aplicação publicada é um site estático, usamos um servidor de desenvolvimento simples para rodar localmente.
 
 ### Pré-requisitos
 
--   [**Node.js**](https://nodejs.org/en/) (v18.x ou superior, para usar o `npm`, se necessário)
 -   [**Git**](https://git-scm.com/downloads)
 -   **VS Code** com a extensão [**Live Server**](https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
 
@@ -53,15 +54,21 @@ Como a aplicação online é um site estático com funções serverless, usamos 
 
 1.  **Clone o repositório**:
     ```bash
-    git clone [https://github.com/seu-usuario/lazy-copypaste.git](https://github.com/seu-usuario/lazy-copypaste.git)
+    git clone [https://github.com/papaiel-dev/The-Lazy-Copypaste.git](https://github.com/papaiel-dev/The-Lazy-Copypaste.git)
     ```
+    *(Este é o link do seu repositório, outros usuários podem clonar a partir daqui!)*
+
 2.  **Navegue até a pasta do projeto**:
     ```bash
-    cd lazy-copypaste
+    cd The-Lazy-Copypaste
     ```
-3.  **Inicie o servidor local com o Live Server**:
+3.  **Configure as chaves do Supabase**:
+    * Crie um arquivo `supabaseClient.js` na raiz do projeto (ou dentro da pasta `public` se preferir, ajustando o caminho no HTML).
+    * Cole o conteúdo do arquivo `supabaseClient.js` que desenvolvemos, inserindo suas chaves do Supabase.
+
+4.  **Inicie o servidor local com o Live Server**:
     * Abra a pasta do projeto no VS Code.
-    * No painel de arquivos, clique com o botão direito no arquivo `public/index.html`.
+    * No painel de arquivos, clique com o botão direito no arquivo `index.html` (ou no arquivo que serve como sua página inicial).
     * Selecione **"Open with Live Server"**.
 
     Uma nova aba do navegador abrirá automaticamente em um endereço como `http://127.0.0.1:5500`, com a sua aplicação funcionando!
