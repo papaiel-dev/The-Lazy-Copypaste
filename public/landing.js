@@ -3,17 +3,18 @@ function initializeLandingPage() {
         setTimeout(initializeLandingPage, 100);
         return;
     }
-
-    const modal = document.getElementById('auth-modal');
+    
+    const authModal = document.getElementById('auth-modal');
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     const forgotPasswordLink = document.getElementById('forgot-password-link');
-    const authModalCloseBtn = modal.querySelector('.modal-close');
+    const authModalCloseBtn = authModal.querySelector('.modal-close');
     const modalTabs = authModal.querySelector('.modal-tabs');
     const loginTab = authModal.querySelector('#login-tab');
     const registerTab = authModal.querySelector('#register-tab');
     const authStatusMessage = authModal.querySelector('#modal-status-message');
     const actionButtons = document.querySelectorAll('[data-action]');
+    
     const recoveryModal = document.getElementById('recovery-modal');
     const recoveryForm = document.getElementById('recoveryForm');
     const recoveryModalCloseBtn = recoveryModal.querySelector('.modal-close');
@@ -73,12 +74,12 @@ function initializeLandingPage() {
         element.className = isError ? 'status-message error' : 'status-message success';
         element.style.display = 'block';
     };
-
+    
     actionButtons.forEach(button => button.addEventListener('click', () => openAuthModal(button.getAttribute('data-action'))));
     authModalCloseBtn.addEventListener('click', closeAuthModal);
     authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAuthModal(); });
     modalTabs.addEventListener('click', (e) => { if (e.target.matches('.tab-link')) switchTab(e.target.getAttribute('data-tab')); });
-
+    
     forgotPasswordLink.addEventListener('click', (e) => { e.preventDefault(); openRecoveryModal(); });
     recoveryModalCloseBtn.addEventListener('click', closeRecoveryModal);
     recoveryModal.addEventListener('click', (e) => { if (e.target === recoveryModal) closeRecoveryModal(); });
@@ -101,7 +102,7 @@ function initializeLandingPage() {
         submitButton.disabled = false;
         submitButton.textContent = 'Enviar Link';
     });
-
+    
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value;
@@ -128,4 +129,5 @@ function initializeLandingPage() {
         }
     });
 }
+
 document.addEventListener('DOMContentLoaded', initializeLandingPage);
