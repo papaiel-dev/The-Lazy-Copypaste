@@ -1,5 +1,4 @@
 require('dotenv').config();
-
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
@@ -7,22 +6,15 @@ const cookieParser = require('cookie-parser');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// --- Middlewares ---
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser());
 
-// --- Middleware de Proteção de Página ---
 const pageProtectionMiddleware = (req, res, next) => {
     const token = req.cookies['sb-access-token'];
-    if (!token) {
-        return res.redirect('/');
-    }
+    if (!token) return res.redirect('/');
     next();
 };
 
-// --- Rota de Configuração para o Frontend ---
 app.get('/api/config', (req, res) => {
     res.json({
         supabaseUrl: process.env.PUBLIC_SUPABASE_URL,
@@ -30,16 +22,15 @@ app.get('/api/config', (req, res) => {
     });
 });
 
-// --- ROTAS PARA SERVIR AS PÁGINAS HTML ---
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
-app.get('/reset-password.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'reset-password.html')));
+// ... (e todas as outras rotas para servir as páginas .html)
 app.get('/dashboard.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 app.get('/manage.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'manage.html')));
 app.get('/search.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'search.html')));
 app.get('/edit.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'edit.html')));
 app.get('/edit/:id', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'edit.html')));
+app.get('/reset-password.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'reset-password.html')));
+app.get('/account.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'account.html')));
 
-// --- Inicia o servidor ---
-app.listen(port, () => {
-    console.log(`Servidor rodando na porta ${port}`);
-});
+
+app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
