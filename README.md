@@ -1,4 +1,4 @@
-# Gerenciador de Feedbacks
+# Gerenciador de Feedbacks - The Lazy Box
 
 **[Acesse a Aplicação Ao Vivo!](https://feedback-manager-2-0.onrender.com/)** 🚀
 
