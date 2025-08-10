@@ -3,6 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
+const { createClient } = require('@supabase/supabase-js'); // Importa o createClient
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -13,16 +14,35 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// --- Middleware de Proteção de Página ---
-const pageProtectionMiddleware = (req, res, next) => {
+// --- Cliente Admin do Supabase (para uso SEGURO no servidor) ---
+// Ele usa a chave de serviço que configuramos nas variáveis de ambiente
+const supabaseAdmin = createClient(
+  process.env.PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
+
+// --- Middleware de Proteção de Página (VERSÃO ROBUSTA) ---
+const pageProtectionMiddleware = async (req, res, next) => {
     const token = req.cookies['sb-access-token'];
     if (!token) {
+        return res.redirect('/'); // Se não há token, redireciona
+    }
+    
+    // Pede ao Supabase para validar o token
+    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+
+    if (error || !user) {
+        // Se o token for inválido ou expirado, limpa o cookie e redireciona
+        res.clearCookie('sb-access-token');
+        res.clearCookie('sb-refresh-token');
         return res.redirect('/');
     }
+    
+    // Se o token for válido, permite o acesso
     next();
 };
 
-// --- Rota de Configuração ---
+// --- Rota de Configuração (sem alterações) ---
 app.get('/api/config', (req, res) => {
     res.json({
         supabaseUrl: process.env.PUBLIC_SUPABASE_URL,
