@@ -15,14 +15,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // --- Middleware de Proteção de Página ---
 const pageProtectionMiddleware = (req, res, next) => {
-    const token = req.cookies['sb-access-token']; // O cookie que o Supabase cria
+    const token = req.cookies['sb-access-token'];
     if (!token) {
         return res.redirect('/');
     }
     next();
 };
 
-// --- Rota de Configuração ---
+// --- Rota de Configuração para o Frontend ---
 app.get('/api/config', (req, res) => {
     res.json({
         supabaseUrl: process.env.PUBLIC_SUPABASE_URL,
@@ -32,10 +32,12 @@ app.get('/api/config', (req, res) => {
 
 // --- ROTAS PARA SERVIR AS PÁGINAS HTML ---
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/reset-password.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'reset-password.html')));
 app.get('/dashboard.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
 app.get('/manage.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'manage.html')));
 app.get('/search.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'search.html')));
 app.get('/edit.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'edit.html')));
+app.get('/edit/:id', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'edit.html')));
 
 // --- Inicia o servidor ---
 app.listen(port, () => {

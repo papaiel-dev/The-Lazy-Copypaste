@@ -107,6 +107,24 @@ a:hover {
     line-height: 1;
     color: #aaa;
 }
+.tab-content.active { display: block; }
+.public-view .form-group { margin-bottom: 20px; }
+
+/* --- NOVO ESTILO PARA O LINK 'ESQUECI MINHA SENHA' --- */
+.form-link-wrapper {
+    text-align: right;
+    margin-top: -10px;
+    margin-bottom: 20px;
+}
+.form-link-wrapper a {
+    font-size: 0.9rem;
+}
+
+.public-view .form-group label { display: block; margin-bottom: 8px; font-weight: 500; }
+.public-view .form-group input {
+    width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem;
+    font-family: 'Poppins', sans-serif; transition: all 0.2s ease;
+}
 
 /* ================================================= */
 /* === ESTILOS DA ÁREA INTERNA (APP LOGADO) === */

@@ -41,6 +41,9 @@
                         <div class="label-wrapper"><label for="login-password">Senha</label><button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button></div>
                         <input type="password" id="login-password" required>
                     </div>
+                    <div class="form-link-wrapper">
+                        <a href="#" id="forgot-password-link">Esqueci minha senha</a>
+                    </div>
                     <button type="submit" class="btn-primary">Entrar</button>
                 </form>
             </div>
@@ -61,6 +64,29 @@
                 </form>
             </div>
             <div id="modal-status-message" class="status-message" style="display:none;"></div>
+        </div>
+    </div>
+
+    <div id="recovery-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close" title="Fechar">&times;</button>
+            <div class="text-center">
+                <h2>Redefinir Senha</h2>
+            </div>
+            <div id="recovery-step-1">
+                <form id="recoveryForm">
+                    <p class="form-description">Digite seu e-mail e enviaremos um link para redefinir sua senha.</p>
+                    <div class="form-group">
+                        <label for="recovery-email">E-mail</label>
+                        <input type="email" id="recovery-email" required>
+                    </div>
+                    <button type="submit" class="btn-primary">Enviar Link</button>
+                </form>
+            </div>
+            <div id="recovery-step-2" style="display: none;" class="text-center">
+                 <p class="form-description"></p>
+            </div>
+            <div id="recovery-status-message" class="status-message" style="display:none;"></div>
         </div>
     </div>
     
