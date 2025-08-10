@@ -1,8 +1,6 @@
 # The Lazy Copypaste
 
-**[Acesse a Aplicação Ao Vivo!](https://the-lazy-copypaste-grwf.vercel.app/)** 🚀
-
-*(Por favor, verifique se este é o seu link final da Vercel e ajuste se necessário)*
+**[Acesse a Aplicação Ao Vivo!](https://the-lazy-copypaste.vercel.app/)** 🚀
 
 ---
 
