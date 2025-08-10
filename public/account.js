@@ -4,13 +4,20 @@ function initializeAccountPage() {
         return;
     }
 
+    // Elementos do formulário
     const updateNameForm = document.getElementById('updateNameForm');
     const updatePasswordForm = document.getElementById('updatePasswordForm');
     const deleteAccountBtn = document.getElementById('delete-account-btn');
     const userNameInput = document.getElementById('user-name');
     const newPasswordInput = document.getElementById('new-password');
+    const confirmNewPasswordInput = document.getElementById('confirm-new-password'); // Novo campo
     const statusMessage = document.getElementById('status-message');
     
+    // Elementos do novo modal
+    const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+
     let currentUser = null;
 
     const showStatusMessage = (message, isError = false) => {
@@ -20,6 +27,7 @@ function initializeAccountPage() {
         setTimeout(() => { statusMessage.style.display = 'none'; }, 4000);
     };
 
+    // Carrega os dados do usuário ao abrir a página
     supabase.auth.getUser().then(({ data: { user } }) => {
         if (user) {
             currentUser = user;
@@ -29,6 +37,7 @@ function initializeAccountPage() {
         }
     });
 
+    // Formulário para atualizar o nome
     updateNameForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const { data, error } = await supabase.auth.updateUser({
@@ -41,54 +50,70 @@ function initializeAccountPage() {
         }
     });
 
+    // Formulário para atualizar a senha (com validação)
     updatePasswordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        if (newPasswordInput.value.length < 6) {
+        const newPassword = newPasswordInput.value;
+        const confirmPassword = confirmNewPasswordInput.value;
+
+        if (newPassword.length < 6) {
             return showStatusMessage('A nova senha deve ter no mínimo 6 caracteres.', true);
         }
+        if (newPassword !== confirmPassword) {
+            return showStatusMessage('As senhas não coincidem.', true);
+        }
+        
         const { data, error } = await supabase.auth.updateUser({
-            password: newPasswordInput.value
+            password: newPassword
         });
         if (error) {
             showStatusMessage(`Erro ao atualizar senha: ${error.message}`, true);
         } else {
             showStatusMessage('Senha atualizada com sucesso!');
             newPasswordInput.value = '';
+            confirmNewPasswordInput.value = '';
         }
     });
 
-    deleteAccountBtn.addEventListener('click', async () => {
+    // Botão "Deletar Minha Conta" agora abre o modal
+    deleteAccountBtn.addEventListener('click', () => {
+        deleteConfirmModal.style.display = 'flex';
+    });
+
+    // Botão "Cancelar" no modal
+    cancelDeleteBtn.addEventListener('click', () => {
+        deleteConfirmModal.style.display = 'none';
+    });
+
+    // Botão "Sim, deletar" no modal (a lógica de exclusão)
+    confirmDeleteBtn.addEventListener('click', async () => {
         if (!currentUser) return;
         
-        const confirmation = prompt(`AÇÃO IRREVERSÍVEL!\n\nIsto irá deletar permanentemente sua conta e todos os seus textos. Para confirmar, digite seu e-mail: ${currentUser.email}`);
-        
-        if (confirmation === currentUser.email) {
-            try {
-                const { data: { session } } = await supabase.auth.getSession();
-                if (!session) throw new Error("Sessão não encontrada, por favor faça login novamente.");
+        confirmDeleteBtn.disabled = true;
+        confirmDeleteBtn.textContent = 'Deletando...';
 
-                const response = await fetch('/api/delete-user', {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${session.access_token}`,
-                    }
-                });
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error("Sessão não encontrada, por favor faça login novamente.");
 
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.error || 'Falha ao deletar a conta.');
+            const response = await fetch('/api/delete-user', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
                 }
+            });
 
-                alert("Conta deletada com sucesso. Você será desconectado.");
-                await supabase.auth.signOut();
-                window.location.href = '/';
+            const result = await response.json();
+            if (!response.ok) throw new Error(result.error || 'Falha ao deletar a conta.');
 
-            } catch (error) {
-                alert(`Erro: ${error.message}`);
-            }
-        } else if (confirmation !== null) {
-            alert("A confirmação falhou. Sua conta não foi deletada.");
+            alert("Conta deletada com sucesso. Você será desconectado.");
+            await supabase.auth.signOut();
+            window.location.href = '/';
+
+        } catch (error) {
+            alert(`Erro: ${error.message}`);
+            confirmDeleteBtn.disabled = false;
+            confirmDeleteBtn.textContent = 'Sim, deletar minha conta';
         }
     });
 }
