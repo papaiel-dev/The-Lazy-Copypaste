@@ -1,7 +1,7 @@
 {
-  "name": "feedback-manager",
-  "version": "2.0.0",
-  "description": "Uma aplicação para gerenciar feedbacks.",
+  "name": "lazy-copypaste",
+  "version": "1.0.0",
+  "description": "Uma aplicação para gerenciar e copiar textos e snippets rapidamente.",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@supabase/supabase-js": "^2.54.0",
+    "@supabase/supabase-js": "^2.43.4",
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.4.5",
     "express": "^4.19.2"

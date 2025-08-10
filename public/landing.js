@@ -3,18 +3,17 @@ function initializeLandingPage() {
         setTimeout(initializeLandingPage, 100);
         return;
     }
-    
-    const authModal = document.getElementById('auth-modal');
+
+    const modal = document.getElementById('auth-modal');
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
     const forgotPasswordLink = document.getElementById('forgot-password-link');
-    const authModalCloseBtn = authModal.querySelector('.modal-close');
+    const authModalCloseBtn = modal.querySelector('.modal-close');
     const modalTabs = authModal.querySelector('.modal-tabs');
     const loginTab = authModal.querySelector('#login-tab');
     const registerTab = authModal.querySelector('#register-tab');
     const authStatusMessage = authModal.querySelector('#modal-status-message');
     const actionButtons = document.querySelectorAll('[data-action]');
-    
     const recoveryModal = document.getElementById('recovery-modal');
     const recoveryForm = document.getElementById('recoveryForm');
     const recoveryModalCloseBtn = recoveryModal.querySelector('.modal-close');
@@ -35,6 +34,7 @@ function initializeLandingPage() {
             }
         });
     }
+
     const registerToggles = registerForm.querySelectorAll('.toggle-password-label');
     const registerPasswordInputs = [
         registerForm.querySelector('#register-password'),
@@ -61,7 +61,7 @@ function initializeLandingPage() {
         recoveryStatusMessage.style.display = 'none';
         recoveryModal.style.display = 'flex';
     };
-    const closeRecoveryModal = () => recoveryModal.style.display = 'none';
+    const closeRecoveryModal = () => { recoveryModal.style.display = 'none'; };
     const switchTab = (tabName) => {
         modalTabs.querySelectorAll('.tab-link').forEach(tab => tab.classList.remove('active'));
         modalTabs.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
@@ -73,12 +73,12 @@ function initializeLandingPage() {
         element.className = isError ? 'status-message error' : 'status-message success';
         element.style.display = 'block';
     };
-    
+
     actionButtons.forEach(button => button.addEventListener('click', () => openAuthModal(button.getAttribute('data-action'))));
     authModalCloseBtn.addEventListener('click', closeAuthModal);
     authModal.addEventListener('click', (e) => { if (e.target === authModal) closeAuthModal(); });
     modalTabs.addEventListener('click', (e) => { if (e.target.matches('.tab-link')) switchTab(e.target.getAttribute('data-tab')); });
-    
+
     forgotPasswordLink.addEventListener('click', (e) => { e.preventDefault(); openRecoveryModal(); });
     recoveryModalCloseBtn.addEventListener('click', closeRecoveryModal);
     recoveryModal.addEventListener('click', (e) => { if (e.target === recoveryModal) closeRecoveryModal(); });
@@ -89,11 +89,7 @@ function initializeLandingPage() {
         const submitButton = recoveryForm.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         submitButton.textContent = 'Enviando...';
-
-        const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${window.location.origin}/reset-password.html`,
-        });
-
+        const { data, error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: `${window.location.origin}/reset-password.html` });
         if (error) {
             showStatusMessage(recoveryStatusMessage, `Erro: ${error.message}`, true);
         } else {
@@ -105,7 +101,7 @@ function initializeLandingPage() {
         submitButton.disabled = false;
         submitButton.textContent = 'Enviar Link';
     });
-    
+
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value;

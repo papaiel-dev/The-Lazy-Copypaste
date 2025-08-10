@@ -1,11 +1,2 @@
-# Pasta de dependências do Node.js
 node_modules/
-
-# Arquivo de variáveis de ambiente
 .env
-
-# Arquivos de banco de dados locais (legado)
-*.db
-
-# Arquivos de log
-*.log
