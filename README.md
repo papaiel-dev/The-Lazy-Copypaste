@@ -1,4 +1,4 @@
-# Lazy Copypaste®
+# The Lazy Copypaste®
 
 **[Acesse a Aplicação Ao Vivo!](https://feedback-manager-2-0.onrender.com/)** 🚀
 
