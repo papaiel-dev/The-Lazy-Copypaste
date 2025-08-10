@@ -38,10 +38,7 @@
                     <p class="form-description">Acesse sua conta para continuar.</p>
                     <div class="form-group"><label for="login-email">E-mail</label><input type="email" id="login-email" required></div>
                     <div class="form-group">
-                        <div class="label-wrapper">
-                            <label for="login-password">Senha</label>
-                            <button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button>
-                        </div>
+                        <div class="label-wrapper"><label for="login-password">Senha</label><button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button></div>
                         <input type="password" id="login-password" required>
                     </div>
                     <button type="submit" class="btn-primary">Entrar</button>
@@ -53,17 +50,11 @@
                     <p class="form-description">Crie sua conta gratuitamente.</p>
                     <div class="form-group"><label for="register-email">E-mail</label><input type="email" id="register-email" required></div>
                     <div class="form-group">
-                        <div class="label-wrapper">
-                            <label for="register-password">Senha</label>
-                            <button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button>
-                        </div>
+                        <div class="label-wrapper"><label for="register-password">Senha</label><button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button></div>
                         <input type="password" id="register-password" required>
                     </div>
                     <div class="form-group">
-                        <div class="label-wrapper">
-                            <label for="register-confirm-password">Confirmar Senha</label>
-                            <button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button>
-                        </div>
+                        <div class="label-wrapper"><label for="register-confirm-password">Confirmar Senha</label><button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button></div>
                         <input type="password" id="register-confirm-password" required>
                     </div>
                     <button type="submit" class="btn-primary">Cadastrar</button>
@@ -72,6 +63,10 @@
             <div id="modal-status-message" class="status-message" style="display:none;"></div>
         </div>
     </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script> const supabase_module = supabase; </script>
+    <script src="/supabaseClient.js"></script>
     <script src="/landing.js"></script>
 </body>
 </html>

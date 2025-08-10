@@ -1,54 +1,39 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initializeSearchPage() {
+    if (typeof supabase === 'undefined') {
+        setTimeout(initializeSearchPage, 100);
+        return;
+    }
     const searchInput = document.getElementById('searchInput');
     const suggestionsBox = document.getElementById('suggestions-box');
-    
     const displayBox = document.getElementById('feedback-display');
     const feedbackTitle = document.getElementById('feedback-title');
     const feedbackText = document.getElementById('feedback-text');
     const copyButton = document.getElementById('copy-button');
     const closeViewBtn = document.getElementById('close-view-btn');
-
     let debounceTimer;
 
-    // Função de renderização agora lida com o estado vazio
     const renderSuggestions = (feedbacks, query = '') => {
         suggestionsBox.innerHTML = ''; 
-        displayBox.style.display = 'none'; // Sempre esconde o display ao renderizar a lista
-        
-        if (feedbacks.length > 0) {
+        displayBox.style.display = 'none';
+        if (!feedbacks || feedbacks.length === 0) {
             suggestionsBox.style.display = 'block';
-            feedbacks.forEach(fb => {
-                const suggestionItem = document.createElement('div');
-                suggestionItem.className = 'suggestion-item';
-                suggestionItem.textContent = fb.title;
-                suggestionItem.onclick = () => selectFeedback(fb);
-                suggestionsBox.appendChild(suggestionItem);
-            });
-        } else {
-            // Se não houver feedbacks, mostra uma mensagem de estado vazio
-            suggestionsBox.style.display = 'block'; // Mostra a caixa para conter a mensagem
             let emptyStateHTML = '';
-
             if (query) {
-                // Mensagem para quando uma BUSCA não retorna nada
-                emptyStateHTML = `
-                    <div class="empty-state-search">
-                        <h3>Nenhum resultado encontrado para "${query}"</h3>
-                        <p>Tente refinar seus termos de busca.</p>
-                    </div>
-                `;
+                emptyStateHTML = `<div class="empty-state-search"><h3>Nenhum resultado para "${query}"</h3><p>Tente refinar sua busca.</p></div>`;
             } else {
-                // Mensagem para quando NÃO HÁ NENHUM FEEDBACK CADASTRADO
-                emptyStateHTML = `
-                    <div class="empty-state">
-                        <h2>Nenhum feedback por aqui ainda!</h2>
-                        <p>Vá para a área de gerenciamento para criar seu primeiro feedback.</p>
-                        <a href="/manage.html" class="btn-primary">Gerenciar Feedbacks</a>
-                    </div>
-                `;
+                emptyStateHTML = `<div class="empty-state"><h2>Nenhum feedback cadastrado.</h2><p>Vá para a área de gerenciamento para criar seu primeiro feedback.</p><a href="/manage.html" class="btn-primary">Gerenciar Feedbacks</a></div>`;
             }
             suggestionsBox.innerHTML = emptyStateHTML;
+            return;
         }
+        suggestionsBox.style.display = 'block';
+        feedbacks.forEach(fb => {
+            const suggestionItem = document.createElement('div');
+            suggestionItem.className = 'suggestion-item';
+            suggestionItem.textContent = fb.title;
+            suggestionItem.onclick = () => selectFeedback(fb);
+            suggestionsBox.appendChild(suggestionItem);
+        });
     };
     
     const fetchSuggestions = async (query) => {
@@ -56,23 +41,15 @@ document.addEventListener('DOMContentLoaded', () => {
             loadInitialList(); 
             return;
         }
-        try {
-            const response = await fetch(`/api/feedbacks?search=${encodeURIComponent(query)}`);
-            const { feedbacks } = await response.json();
-            renderSuggestions(feedbacks, query);
-        } catch (error) {
-            console.error('Erro ao buscar sugestões:', error);
-        }
+        const { data: feedbacks, error } = await supabase.from('feedbacks').select('*').ilike('title', `%${query}%`).order('title', { ascending: true });
+        if (error) console.error('Erro ao buscar:', error);
+        else renderSuggestions(feedbacks, query);
     };
 
     const loadInitialList = async () => {
-        try {
-            const response = await fetch('/api/feedbacks');
-            const { feedbacks } = await response.json();
-            renderSuggestions(feedbacks);
-        } catch (error) {
-            console.error('Erro ao carregar a lista inicial:', error);
-        }
+        const { data: feedbacks, error } = await supabase.from('feedbacks').select('*').order('title', { ascending: true });
+        if (error) console.error('Erro ao carregar lista:', error);
+        else renderSuggestions(feedbacks);
     };
 
     const selectFeedback = (feedback) => {
@@ -87,26 +64,20 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => { copyButton.textContent = 'Copiar Texto'; }, 2000);
         };
     };
-    
     const resetToListView = () => {
         displayBox.style.display = 'none';
         loadInitialList();
     };
-
     searchInput.addEventListener('input', () => {
         clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(() => {
-            fetchSuggestions(searchInput.value);
-        }, 250);
+        debounceTimer = setTimeout(() => fetchSuggestions(searchInput.value), 250);
     });
-
     document.addEventListener('click', (e) => {
         if (!suggestionsBox.contains(e.target) && e.target !== searchInput) {
             suggestionsBox.style.display = 'none';
         }
     });
-
     closeViewBtn.addEventListener('click', resetToListView);
-
     loadInitialList();
-});
+}
+document.addEventListener('DOMContentLoaded', initializeSearchPage);

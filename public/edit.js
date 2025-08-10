@@ -1,4 +1,9 @@
-document.addEventListener('DOMContentLoaded', async () => {
+function initializeEditPage() {
+    if (typeof supabase === 'undefined') {
+        setTimeout(initializeEditPage, 100);
+        return;
+    }
+
     const form = document.getElementById('editForm');
     const pageTitle = document.getElementById('page-title');
     const titleInput = document.getElementById('title');
@@ -6,15 +11,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const backButton = document.getElementById('backButton');
     const saveButton = document.getElementById('saveButton');
     const statusMessage = document.getElementById('status-message');
-
     const successModal = document.getElementById('success-modal');
     const successMessageText = document.getElementById('success-message-text');
     const goToManageBtn = document.getElementById('go-to-manage-btn');
     const createAnotherBtn = document.getElementById('create-another-btn');
-
-    const pathParts = window.location.pathname.split('/');
-    const feedbackId = pathParts[2];
-    const isEditing = feedbackId && !isNaN(feedbackId);
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    const feedbackId = urlParams.get('id');
+    const isEditing = !!feedbackId;
 
     const showErrorMessage = (message) => {
         statusMessage.textContent = message;
@@ -27,59 +31,73 @@ document.addEventListener('DOMContentLoaded', async () => {
         successMessageText.textContent = message;
         successModal.style.display = 'flex';
     };
-    const closeSuccessModal = () => {
-        successModal.style.display = 'none';
-    };
+    const closeSuccessModal = () => successModal.style.display = 'none';
 
     if (isEditing) {
         pageTitle.textContent = 'Editar Feedback';
-        try {
-            const response = await fetch(`/api/feedbacks/${feedbackId}`);
-            if (!response.ok) throw new Error('Feedback não encontrado.');
-            const feedback = await response.json();
-            titleInput.value = feedback.title;
-            textInput.value = feedback.text;
-        } catch (error) {
-            alert(error.message);
-            window.location.href = '/manage.html';
-        }
+        supabase.from('feedbacks').select('*').eq('id', feedbackId).single()
+            .then(({ data: feedback, error }) => {
+                if (error || !feedback) {
+                    alert('Feedback não encontrado ou você não tem permissão.');
+                    window.location.href = '/manage.html';
+                } else {
+                    titleInput.value = feedback.title;
+                    textInput.value = feedback.text;
+                }
+            });
     }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         saveButton.disabled = true;
         saveButton.textContent = 'Salvando...';
-        const url = isEditing ? `/api/feedbacks/${feedbackId}` : '/api/feedbacks';
-        const method = isEditing ? 'PUT' : 'POST';
 
-        try {
-            const response = await fetch(url, {
-                method: method,
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    title: titleInput.value.trim(),
-                    text: textInput.value.trim()
-                })
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error);
-            
-            const successMsg = isEditing ? 'Feedback atualizado com sucesso!' : 'Feedback criado com sucesso!';
-            openSuccessModal(successMsg);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return alert('Você não está logado.');
 
-        } catch (error) {
-            showErrorMessage(`Falha ao Salvar: ${error.message}`);
-        } finally {
-            saveButton.disabled = false;
-            saveButton.textContent = 'Salvar';
+        const feedbackData = {
+            title: titleInput.value.trim(),
+            text: textInput.value.trim(),
+            userId: user.id
+        };
+
+        let query;
+        if (isEditing) {
+            // Remove o userId para não tentar atualizar, pois ele não deve mudar
+            delete feedbackData.userId;
+            query = supabase.from('feedbacks').update(feedbackData).eq('id', feedbackId);
+        } else {
+            query = supabase.from('feedbacks').insert(feedbackData);
         }
+
+        const { error } = await query;
+        
+        if (error) {
+            if (error.message.includes('unique_user_title')) {
+                showErrorMessage('Falha ao Salvar: Você já possui um feedback com este título.');
+            } else {
+                showErrorMessage(`Falha ao Salvar: ${error.message}`);
+            }
+        } else {
+            const successMsg = isEditing ? 'Feedback atualizado!' : 'Feedback criado!';
+            openSuccessModal(successMsg);
+        }
+        
+        saveButton.disabled = false;
+        saveButton.textContent = 'Salvar';
     });
 
     backButton.addEventListener('click', () => window.location.href = '/manage.html');
     goToManageBtn.addEventListener('click', () => window.location.href = '/manage.html');
     createAnotherBtn.addEventListener('click', () => {
-        closeSuccessModal();
-        form.reset();
-        titleInput.focus();
+        if(isEditing) {
+            // Se estava editando, voltar para a lista é mais seguro
+            window.location.href = '/manage.html';
+        } else {
+            closeSuccessModal();
+            form.reset();
+            titleInput.focus();
+        }
     });
-});
+}
+document.addEventListener('DOMContentLoaded', initializeEditPage);

@@ -1,16 +1,19 @@
-document.addEventListener('DOMContentLoaded', () => {
+function initializeLandingPage() {
+    if (typeof supabase === 'undefined') {
+        setTimeout(initializeLandingPage, 100);
+        return;
+    }
+
     const modal = document.getElementById('auth-modal');
-    if (!modal) return;
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
     const modalCloseBtn = modal.querySelector('.modal-close');
     const modalTabs = modal.querySelector('.modal-tabs');
     const loginTab = modal.querySelector('#login-tab');
     const registerTab = modal.querySelector('#register-tab');
     const statusMessage = modal.querySelector('#modal-status-message');
     const actionButtons = document.querySelectorAll('[data-action]');
-    const loginForm = document.getElementById('loginForm');
-    const registerForm = document.getElementById('registerForm');
-
-    // Lógica para o botão de senha do formulário de LOGIN (independente)
+    
     const loginToggle = loginForm.querySelector('.toggle-password-label');
     if (loginToggle) {
         loginToggle.addEventListener('click', () => {
@@ -25,7 +28,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Lógica SINCRONIZADA para os botões de senha do formulário de CADASTRO
     const registerToggles = registerForm.querySelectorAll('.toggle-password-label');
     const registerPasswordInputs = [
         registerForm.querySelector('#register-password'),
@@ -42,15 +44,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Funções do Modal
-    const openModal = (defaultTab = 'login') => {
-        modal.style.display = 'flex';
-        switchTab(defaultTab);
-    };
-    const closeModal = () => {
-        modal.style.display = 'none';
-        statusMessage.style.display = 'none';
-    };
+    const openModal = (defaultTab = 'login') => { modal.style.display = 'flex'; switchTab(defaultTab); };
+    const closeModal = () => { modal.style.display = 'none'; statusMessage.style.display = 'none'; };
     const switchTab = (tabName) => {
         modalTabs.querySelectorAll('.tab-link').forEach(tab => tab.classList.remove('active'));
         modalTabs.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
@@ -63,41 +58,20 @@ document.addEventListener('DOMContentLoaded', () => {
         statusMessage.style.display = 'block';
     };
     
-    // Event Listeners
-    actionButtons.forEach(button => {
-        button.addEventListener('click', () => {
-            const action = button.getAttribute('data-action');
-            openModal(action);
-        });
-    });
+    actionButtons.forEach(button => button.addEventListener('click', () => openModal(button.getAttribute('data-action'))));
     modalCloseBtn.addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
-    modalTabs.addEventListener('click', (e) => {
-        if (e.target.matches('.tab-link')) {
-            switchTab(e.target.getAttribute('data-tab'));
-        }
-    });
+    modalTabs.addEventListener('click', (e) => { if (e.target.matches('.tab-link')) switchTab(e.target.getAttribute('data-tab')); });
 
-    // Submissão do Formulário de Login
     loginForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value;
         const password = document.getElementById('login-password').value;
-        try {
-            const response = await fetch('/api/users/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error);
-            window.location.href = '/dashboard.html';
-        } catch (error) {
-            showStatusMessage(error.message, true);
-        }
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) showStatusMessage(error.message, true);
+        else window.location.href = '/dashboard.html';
     });
 
-    // Submissão do Formulário de Cadastro
     registerForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('register-email').value;
@@ -107,18 +81,13 @@ document.addEventListener('DOMContentLoaded', () => {
             showStatusMessage('As senhas não coincidem.', true);
             return;
         }
-        try {
-            const response = await fetch('/api/users/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error);
-            showStatusMessage('Cadastro realizado! Faça o login para continuar.');
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) showStatusMessage(error.message, true);
+        else {
+            showStatusMessage('Cadastro realizado! Verifique seu e-mail para confirmar a conta e depois faça o login.');
             switchTab('login');
-        } catch (error) {
-            showStatusMessage(error.message, true);
         }
     });
-});
+}
+
+document.addEventListener('DOMContentLoaded', initializeLandingPage);

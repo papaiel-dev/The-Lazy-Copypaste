@@ -1,34 +1,34 @@
-document.addEventListener('DOMContentLoaded', async () => {
+function initializeDashboard() {
+    if (typeof supabase === 'undefined') {
+        setTimeout(initializeDashboard, 100);
+        return;
+    }
+
     const userInfoDiv = document.getElementById('user-info');
     const userEmailSpan = document.getElementById('user-email');
     const logoutBtn = document.getElementById('logout-btn');
 
-    try {
-        // Busca os dados do usuário logado na nova API
-        const response = await fetch('/api/users/me');
-        if (!response.ok) throw new Error('Usuário não autenticado');
+    supabase.auth.getUser().then(({ data: { user }, error }) => {
+        if (error || !user) {
+            console.error('Nenhum usuário logado, redirecionando...');
+            window.location.href = '/';
+            return;
+        }
 
-        const user = await response.json();
-        
-        // Exibe as informações do usuário e o botão de logout
         userEmailSpan.textContent = `Olá, ${user.email}`;
         userInfoDiv.style.display = 'flex';
         userInfoDiv.style.alignItems = 'center';
         userInfoDiv.style.gap = '15px';
-
-    } catch (error) {
-        // Se falhar (ex: token expirou), redireciona para a página inicial
-        console.error(error);
-        window.location.href = '/';
-    }
-
-    // Adiciona a funcionalidade de logout ao botão
+    });
+    
     logoutBtn.addEventListener('click', async () => {
-        try {
-            await fetch('/api/users/logout', { method: 'POST' });
-            window.location.href = '/';
-        } catch (error) {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
             console.error('Erro ao fazer logout:', error);
         }
+        // Independentemente de erro, redireciona para a home
+        window.location.href = '/';
     });
-});
+}
+
+document.addEventListener('DOMContentLoaded', initializeDashboard);

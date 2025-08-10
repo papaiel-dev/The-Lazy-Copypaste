@@ -7,16 +7,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body class="app-view">
     <div class="container">
         <div class="header">
             <h1>Buscar Feedbacks</h1>
-            <a href="/dashboard.html" class="btn-secondary">Voltar ao Início</a>
+            <a href="/dashboard.html" class="btn-secondary">Voltar ao Dashboard</a>
         </div>
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Digite o título ou número do feedback...">
+            <input type="text" id="searchInput" placeholder="Digite o título ou palavra-chave do feedback...">
             <div id="suggestions-box" class="suggestions-box"></div>
         </div>
         <hr>
@@ -31,6 +31,13 @@
             </div>
         </div>
     </div>
-    <script src="search.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script> const supabase_module = supabase; </script>
+    
+    <script src="/supabaseClient.js"></script>
+    
+    <script src="/search.js"></script>
 </body>
 </html>
