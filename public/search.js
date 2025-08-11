@@ -5,33 +5,33 @@ function initializeSearchPage() {
     }
     const searchInput = document.getElementById('searchInput');
     const suggestionsBox = document.getElementById('suggestions-box');
-    const displayBox = document.getElementById('feedback-display');
-    const feedbackTitle = document.getElementById('feedback-title');
-    const feedbackText = document.getElementById('feedback-text');
+    const displayBox = document.getElementById('text-display');
+    const textTitle = document.getElementById('text-title');
+    const textContent = document.getElementById('text-content');
     const copyButton = document.getElementById('copy-button');
     const closeViewBtn = document.getElementById('close-view-btn');
     let debounceTimer;
 
-    const renderSuggestions = (feedbacks, query = '') => {
+    const renderSuggestions = (texts, query = '') => {
         suggestionsBox.innerHTML = ''; 
         displayBox.style.display = 'none';
-        if (!feedbacks || feedbacks.length === 0) {
+        if (!texts || texts.length === 0) {
             suggestionsBox.style.display = 'block';
             let emptyStateHTML = '';
             if (query) {
                 emptyStateHTML = `<div class="empty-state-search"><h3>Nenhum resultado para "${query}"</h3><p>Tente refinar sua busca.</p></div>`;
             } else {
-                emptyStateHTML = `<div class="empty-state"><h2>Nenhum feedback cadastrado.</h2><p>Vá para a área de gerenciamento para criar seu primeiro feedback.</p><a href="/manage.html" class="btn-primary">Gerenciar Feedbacks</a></div>`;
+                emptyStateHTML = `<div class="empty-state"><h2>Nenhum texto cadastrado.</h2><p>Vá para a área de gerenciamento para criar seu primeiro texto.</p><a href="/manage.html" class="btn-primary">Gerenciar Textos</a></div>`;
             }
             suggestionsBox.innerHTML = emptyStateHTML;
             return;
         }
         suggestionsBox.style.display = 'block';
-        feedbacks.forEach(fb => {
+        texts.forEach(item => {
             const suggestionItem = document.createElement('div');
             suggestionItem.className = 'suggestion-item';
-            suggestionItem.textContent = fb.title;
-            suggestionItem.onclick = () => selectFeedback(fb);
+            suggestionItem.textContent = item.title;
+            suggestionItem.onclick = () => selectText(item);
             suggestionsBox.appendChild(suggestionItem);
         });
     };
@@ -41,25 +41,25 @@ function initializeSearchPage() {
             loadInitialList(); 
             return;
         }
-        const { data: feedbacks, error } = await supabase.from('feedbacks').select('*').ilike('title', `%${query}%`).order('title', { ascending: true });
+        const { data: texts, error } = await supabase.from('feedbacks').select('*').ilike('title', `%${query}%`).order('title', { ascending: true });
         if (error) console.error('Erro ao buscar:', error);
-        else renderSuggestions(feedbacks, query);
+        else renderSuggestions(texts, query);
     };
 
     const loadInitialList = async () => {
-        const { data: feedbacks, error } = await supabase.from('feedbacks').select('*').order('title', { ascending: true });
+        const { data: texts, error } = await supabase.from('feedbacks').select('*').order('title', { ascending: true });
         if (error) console.error('Erro ao carregar lista:', error);
-        else renderSuggestions(feedbacks);
+        else renderSuggestions(texts);
     };
 
-    const selectFeedback = (feedback) => {
-        feedbackTitle.textContent = feedback.title;
-        feedbackText.textContent = feedback.text;
+    const selectText = (item) => {
+        textTitle.textContent = item.title;
+        textContent.textContent = item.text;
         displayBox.style.display = 'block';
         suggestionsBox.style.display = 'none';
         searchInput.value = '';
         copyButton.onclick = () => {
-            navigator.clipboard.writeText(feedback.text);
+            navigator.clipboard.writeText(item.text);
             copyButton.textContent = 'Copiado!';
             setTimeout(() => { copyButton.textContent = 'Copiar Texto'; }, 2000);
         };

@@ -17,8 +17,8 @@ function initializeEditPage() {
     const createAnotherBtn = document.getElementById('create-another-btn');
     
     const urlParams = new URLSearchParams(window.location.search);
-    const feedbackId = urlParams.get('id');
-    const isEditing = !!feedbackId;
+    const textId = urlParams.get('id');
+    const isEditing = !!textId;
 
     const showErrorMessage = (message) => {
         statusMessage.textContent = message;
@@ -34,15 +34,15 @@ function initializeEditPage() {
     const closeSuccessModal = () => successModal.style.display = 'none';
 
     if (isEditing) {
-        pageTitle.textContent = 'Editar Feedback';
-        supabase.from('feedbacks').select('*').eq('id', feedbackId).single()
-            .then(({ data: feedback, error }) => {
-                if (error || !feedback) {
-                    alert('Feedback não encontrado ou você não tem permissão.');
+        pageTitle.textContent = 'Editar Texto';
+        supabase.from('feedbacks').select('*').eq('id', textId).single()
+            .then(({ data: textData, error }) => {
+                if (error || !textData) {
+                    alert('Texto não encontrado ou você não tem permissão.');
                     window.location.href = '/manage.html';
                 } else {
-                    titleInput.value = feedback.title;
-                    textInput.value = feedback.text;
+                    titleInput.value = textData.title;
+                    textInput.value = textData.text;
                 }
             });
     }
@@ -55,7 +55,7 @@ function initializeEditPage() {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return alert('Você não está logado.');
 
-        const feedbackData = {
+        const textDataPayload = {
             title: titleInput.value.trim(),
             text: textInput.value.trim(),
             userId: user.id
@@ -63,23 +63,22 @@ function initializeEditPage() {
 
         let query;
         if (isEditing) {
-            // Remove o userId para não tentar atualizar, pois ele não deve mudar
-            delete feedbackData.userId;
-            query = supabase.from('feedbacks').update(feedbackData).eq('id', feedbackId);
+            delete textDataPayload.userId; // Não se atualiza o dono do texto
+            query = supabase.from('feedbacks').update(textDataPayload).eq('id', textId);
         } else {
-            query = supabase.from('feedbacks').insert(feedbackData);
+            query = supabase.from('feedbacks').insert(textDataPayload);
         }
 
         const { error } = await query;
         
         if (error) {
             if (error.message.includes('unique_user_title')) {
-                showErrorMessage('Falha ao Salvar: Você já possui um feedback com este título.');
+                showErrorMessage('Falha ao Salvar: Você já possui um texto com este título.');
             } else {
                 showErrorMessage(`Falha ao Salvar: ${error.message}`);
             }
         } else {
-            const successMsg = isEditing ? 'Feedback atualizado!' : 'Feedback criado!';
+            const successMsg = isEditing ? 'Texto atualizado com sucesso!' : 'Texto criado com sucesso!';
             openSuccessModal(successMsg);
         }
         
@@ -91,7 +90,6 @@ function initializeEditPage() {
     goToManageBtn.addEventListener('click', () => window.location.href = '/manage.html');
     createAnotherBtn.addEventListener('click', () => {
         if(isEditing) {
-            // Se estava editando, voltar para a lista é mais seguro
             window.location.href = '/manage.html';
         } else {
             closeSuccessModal();

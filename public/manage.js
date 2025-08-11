@@ -4,13 +4,13 @@ function initializeManagePage() {
         return;
     }
 
-    const feedbackContainer = document.getElementById('feedbackContainer');
+    const textsContainer = document.getElementById('textsContainer');
     const searchInput = document.getElementById('searchInput');
     let debounceTimer;
 
-    const renderFeedbacks = (feedbacks) => {
-        feedbackContainer.innerHTML = '';
-        if (!feedbacks || feedbacks.length === 0) {
+    const renderTexts = (texts) => {
+        textsContainer.innerHTML = '';
+        if (!texts || texts.length === 0) {
             const emptyStateHTML = `
                 <div class="empty-state">
                     <h2>Nenhum texto por aqui ainda!</h2>
@@ -18,12 +18,12 @@ function initializeManagePage() {
                     <a href="/edit.html" class="btn-primary">Criar meu primeiro texto</a>
                 </div>
             `;
-            feedbackContainer.innerHTML = emptyStateHTML;
+            textsContainer.innerHTML = emptyStateHTML;
             return;
         }
 
-        const grouped = feedbacks.reduce((acc, fb) => {
-            (acc[fb.title] = acc[fb.title] || []).push(fb);
+        const grouped = texts.reduce((acc, item) => {
+            (acc[item.title] = acc[item.title] || []).push(item);
             return acc;
         }, {});
 
@@ -35,25 +35,25 @@ function initializeManagePage() {
             titleEl.textContent = title;
             groupEl.appendChild(titleEl);
 
-            grouped[title].forEach(fb => {
+            grouped[title].forEach(item => {
                 const itemEl = document.createElement('div');
                 itemEl.className = 'feedback-item';
                 const textEl = document.createElement('p');
-                textEl.textContent = fb.text;
+                textEl.textContent = item.text;
                 const buttonWrapper = document.createElement('div');
                 buttonWrapper.className = 'button-wrapper';
 
                 const editBtn = document.createElement('button');
                 editBtn.className = 'edit-btn';
                 editBtn.textContent = 'Editar';
-                editBtn.onclick = () => window.location.href = `/edit.html?id=${fb.id}`;
+                editBtn.onclick = () => window.location.href = `/edit.html?id=${item.id}`;
 
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-btn';
                 deleteBtn.textContent = 'Excluir';
                 deleteBtn.onclick = async () => {
-                    if (confirm(`Tem certeza que deseja excluir o texto "${fb.title}"?`)) {
-                        const { error } = await supabase.from('feedbacks').delete().eq('id', fb.id);
+                    if (confirm(`Tem certeza que deseja excluir o texto "${item.title}"?`)) {
+                        const { error } = await supabase.from('feedbacks').delete().eq('id', item.id);
                         if (error) {
                             alert('Falha ao excluir: ' + error.message);
                         } else {
@@ -68,7 +68,7 @@ function initializeManagePage() {
                 itemEl.appendChild(buttonWrapper);
                 groupEl.appendChild(itemEl);
             });
-            feedbackContainer.appendChild(groupEl);
+            textsContainer.appendChild(groupEl);
         }
     };
 
@@ -80,13 +80,13 @@ function initializeManagePage() {
             query = query.ilike('title', `%${searchTerm}%`);
         }
 
-        const { data: feedbacks, error } = await query;
+        const { data: texts, error } = await query;
         
         if (error) {
             console.error("Erro ao buscar textos:", error);
-            feedbackContainer.innerHTML = '<p style="color:red;">Erro ao carregar os dados.</p>';
+            textsContainer.innerHTML = '<p style="color:red;">Erro ao carregar os dados.</p>';
         } else {
-            renderFeedbacks(feedbacks);
+            renderTexts(texts);
         }
     };
 
