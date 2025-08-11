@@ -12,7 +12,7 @@ function initializeAccountPage() {
     const newPasswordInput = document.getElementById('new-password');
     const confirmNewPasswordInput = document.getElementById('confirm-new-password');
     const statusMessage = document.getElementById('status-message');
-    
+
     // Elementos do modal de exclusão
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
     const deletePasswordForm = document.getElementById('delete-password-form');
@@ -46,7 +46,7 @@ function initializeAccountPage() {
     // Atualizar senha (sem alterações)
     updatePasswordForm.addEventListener('submit', async (e) => { /* ... */ });
 
-    // --- NOVA LÓGICA DE EXCLUSÃO DE CONTA ---
+    // --- LÓGICA DE EXCLUSÃO DE CONTA ---
 
     // 1. Botão principal agora apenas abre o modal
     deleteAccountBtn.addEventListener('click', () => {
@@ -104,12 +104,15 @@ function initializeAccountPage() {
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'Falha ao deletar a conta.');
 
-            alert("Conta deletada com sucesso. Você será desconectado.");
-            await supabase.auth.signOut();
-            window.location.href = '/';
+            showStatusMessage(statusMessage, "Conta deletada com sucesso. Você será desconectado.");
+            setTimeout(async () => {
+                await supabase.auth.signOut();
+                window.location.href = '/';
+            }, 2000); // Dar um tempo para a mensagem aparecer
+            deleteConfirmModal.style.display = 'none'; // Fechar o modal após o sucesso
 
         } catch (error) {
-            alert(`Erro: ${error.message}`);
+            showStatusMessage(statusMessage, `Erro: ${error.message}`, true);
             confirmDeleteBtn.disabled = false;
             confirmDeleteBtn.textContent = 'Sim, deletar minha conta';
         }
