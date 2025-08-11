@@ -8,16 +8,30 @@ function initializeManagePage() {
     const searchInput = document.getElementById('searchInput');
     let debounceTimer;
 
+    // Elementos do Modal de Exclusão
+    const deleteModal = document.getElementById('delete-text-modal');
+    const deleteConfirmText = document.getElementById('delete-confirm-text');
+    const cancelDeleteBtn = document.getElementById('cancel-delete-text-btn');
+    const confirmDeleteBtn = document.getElementById('confirm-delete-text-btn');
+    const modalCloseBtn = deleteModal.querySelector('.modal-close');
+
+    let textToDelete = null; // Variável para guardar o item a ser deletado
+
+    const openDeleteModal = (textItem) => {
+        textToDelete = textItem;
+        deleteConfirmText.textContent = `Você tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
+        deleteModal.style.display = 'flex';
+    };
+
+    const closeDeleteModal = () => {
+        textToDelete = null;
+        deleteModal.style.display = 'none';
+    };
+
     const renderTexts = (texts) => {
         textsContainer.innerHTML = '';
         if (!texts || texts.length === 0) {
-            const emptyStateHTML = `
-                <div class="empty-state">
-                    <h2>Nenhum texto por aqui ainda!</h2>
-                    <p>Que tal começar cadastrando seu primeiro texto?</p>
-                    <a href="/edit.html" class="btn-primary">Criar meu primeiro texto</a>
-                </div>
-            `;
+            const emptyStateHTML = `<div class="empty-state"><h2>Nenhum texto por aqui ainda!</h2><p>Que tal começar cadastrando seu primeiro texto?</p><a href="/edit.html" class="btn-primary">Criar meu primeiro texto</a></div>`;
             textsContainer.innerHTML = emptyStateHTML;
             return;
         }
@@ -51,16 +65,8 @@ function initializeManagePage() {
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-btn';
                 deleteBtn.textContent = 'Excluir';
-                deleteBtn.onclick = async () => {
-                    if (confirm(`Tem certeza que deseja excluir o texto "${item.title}"?`)) {
-                        const { error } = await supabase.from('feedbacks').delete().eq('id', item.id);
-                        if (error) {
-                            alert('Falha ao excluir: ' + error.message);
-                        } else {
-                            fetchAndRender();
-                        }
-                    }
-                };
+                // Agora o botão de excluir abre o modal
+                deleteBtn.onclick = () => openDeleteModal(item);
                 
                 buttonWrapper.appendChild(editBtn);
                 buttonWrapper.appendChild(deleteBtn);
@@ -75,13 +81,10 @@ function initializeManagePage() {
     const fetchAndRender = async () => {
         const searchTerm = searchInput.value.trim();
         let query = supabase.from('feedbacks').select('*').order('title', { ascending: true });
-
         if (searchTerm) {
             query = query.ilike('title', `%${searchTerm}%`);
         }
-
         const { data: texts, error } = await query;
-        
         if (error) {
             console.error("Erro ao buscar textos:", error);
             textsContainer.innerHTML = '<p style="color:red;">Erro ao carregar os dados.</p>';
@@ -89,6 +92,22 @@ function initializeManagePage() {
             renderTexts(texts);
         }
     };
+    
+    // Listeners do Modal
+    cancelDeleteBtn.addEventListener('click', closeDeleteModal);
+    modalCloseBtn.addEventListener('click', closeDeleteModal);
+    confirmDeleteBtn.addEventListener('click', async () => {
+        if (!textToDelete) return;
+
+        const { error } = await supabase.from('feedbacks').delete().eq('id', textToDelete.id);
+        
+        if (error) {
+            alert('Falha ao excluir: ' + error.message); // Mantemos um alert aqui para erros inesperados
+        } else {
+            closeDeleteModal();
+            fetchAndRender(); // Recarrega a lista
+        }
+    });
 
     searchInput.addEventListener('input', () => {
         clearTimeout(debounceTimer);
@@ -97,5 +116,4 @@ function initializeManagePage() {
 
     fetchAndRender();
 }
-
 document.addEventListener('DOMContentLoaded', initializeManagePage);
