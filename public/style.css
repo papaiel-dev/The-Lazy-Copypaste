@@ -262,3 +262,28 @@ a.btn-new:hover,
 a.action-card:hover {
     text-decoration: none;
 }
+/* ESTILO PARA AS MENSAGENS DE STATUS DENTRO DOS FORMULÁRIOS */
+.form-status {
+    display: none; /* Começa escondido */
+    padding: 10px;
+    margin-top: 15px; /* Espaçamento do botão acima */
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+}
+.form-status.success {
+    color: #155724;
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+}
+.form-status.error, .status-message.error { /* Unificando o estilo de erro */
+    color: #721c24;
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+}
+
+/* O status-message do modal continua, mas o global da página pode ser removido se não for mais usado */
+.modal-content .status-message {
+    margin-top: 15px;
+    margin-bottom: 0;
+}

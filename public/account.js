@@ -12,7 +12,10 @@ function initializeAccountPage() {
     const userNameInput = document.getElementById('user-name');
     const newPasswordInput = document.getElementById('new-password');
     const confirmNewPasswordInput = document.getElementById('confirm-new-password');
-    const statusMessage = document.getElementById('status-message');
+    
+    // Elementos de status específicos para cada formulário
+    const updateNameStatus = document.getElementById('updateNameStatus');
+    const updatePasswordStatus = document.getElementById('updatePasswordStatus');
     
     // Elementos do modal de exclusão
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
@@ -24,10 +27,15 @@ function initializeAccountPage() {
 
     let currentUser = null;
 
-    // Função para mostrar mensagens de status
+    // Função genérica para mostrar mensagens de status
     const showStatusMessage = (element, message, isError = false) => {
         element.textContent = message;
-        element.className = isError ? 'status-message error' : 'status-message success';
+        element.className = isError ? 'status-message error' : 'form-status success';
+        if (isError) {
+             element.classList.add('error');
+        } else {
+             element.classList.remove('error');
+        }
         element.style.display = 'block';
         setTimeout(() => { element.style.display = 'none'; }, 4000);
     };
@@ -42,10 +50,9 @@ function initializeAccountPage() {
         userNameInput.value = user.user_metadata.name || '';
     });
 
-    // --- LÓGICA CORRIGIDA PARA ATUALIZAR NOME ---
+    // Formulário para atualizar o nome
     updateNameForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        
         const submitButton = updateNameForm.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         submitButton.textContent = 'Salvando...';
@@ -55,16 +62,16 @@ function initializeAccountPage() {
         });
 
         if (error) {
-            showStatusMessage(statusMessage, `Erro ao atualizar nome: ${error.message}`, true);
+            showStatusMessage(updateNameStatus, `Erro: ${error.message}`, true);
         } else {
-            showStatusMessage(statusMessage, 'Nome atualizado com sucesso!');
+            showStatusMessage(updateNameStatus, 'Nome atualizado com sucesso!');
         }
         
         submitButton.disabled = false;
         submitButton.textContent = 'Salvar Nome';
     });
 
-    // Lógica para atualizar a senha
+    // Formulário para atualizar a senha
     updatePasswordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const submitButton = updatePasswordForm.querySelector('button[type="submit"]');
@@ -75,13 +82,13 @@ function initializeAccountPage() {
         const confirmPassword = confirmNewPasswordInput.value;
 
         if (newPassword.length < 6) {
-            showStatusMessage(statusMessage, 'A nova senha deve ter no mínimo 6 caracteres.', true);
+            showStatusMessage(updatePasswordStatus, 'A nova senha deve ter no mínimo 6 caracteres.', true);
             submitButton.disabled = false;
             submitButton.textContent = 'Alterar Senha';
             return;
         }
         if (newPassword !== confirmPassword) {
-            showStatusMessage(statusMessage, 'As senhas não coincidem.', true);
+            showStatusMessage(updatePasswordStatus, 'As senhas não coincidem.', true);
             submitButton.disabled = false;
             submitButton.textContent = 'Alterar Senha';
             return;
@@ -90,9 +97,9 @@ function initializeAccountPage() {
         const { data, error } = await supabase.auth.updateUser({ password: newPassword });
 
         if (error) {
-            showStatusMessage(statusMessage, `Erro ao atualizar senha: ${error.message}`, true);
+            showStatusMessage(updatePasswordStatus, `Erro: ${error.message}`, true);
         } else {
-            showStatusMessage(statusMessage, 'Senha atualizada com sucesso!');
+            showStatusMessage(updatePasswordStatus, 'Senha atualizada com sucesso!');
             newPasswordInput.value = '';
             confirmNewPasswordInput.value = '';
         }
@@ -116,54 +123,42 @@ function initializeAccountPage() {
     deletePasswordForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!currentUser) return;
-
         const password = deletePasswordInput.value;
         if (!password) {
             showStatusMessage(deleteStatusMessage, 'Por favor, digite sua senha.', true);
             return;
         }
-
         confirmDeleteBtn.disabled = true;
         confirmDeleteBtn.textContent = 'Verificando...';
-
         const { error: signInError } = await supabase.auth.signInWithPassword({
             email: currentUser.email,
             password: password,
         });
-
         if (signInError) {
             showStatusMessage(deleteStatusMessage, 'Senha incorreta. A conta não foi deletada.', true);
             confirmDeleteBtn.disabled = false;
             confirmDeleteBtn.textContent = 'Sim, deletar minha conta';
             return;
         }
-
         confirmDeleteBtn.textContent = 'Deletando...';
         try {
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) throw new Error("Sessão não encontrada.");
-
             const response = await fetch('/api/delete-user', {
                 method: 'POST',
                 headers: { 'Authorization': `Bearer ${session.access_token}` }
             });
-
             const result = await response.json();
             if (!response.ok) throw new Error(result.error || 'Falha ao deletar a conta.');
             
-            showStatusMessage(statusMessage, "Conta deletada com sucesso. Você será desconectado.");
-            setTimeout(async () => {
-                await supabase.auth.signOut();
-                window.location.href = '/';
-            }, 3000);
-            deleteConfirmModal.style.display = 'none';
-
+            alert("Conta deletada com sucesso. Você será desconectado.");
+            await supabase.auth.signOut();
+            window.location.href = '/';
         } catch (error) {
-            showStatusMessage(statusMessage, `Erro: ${error.message}`, true);
+            alert(`Erro: ${error.message}`);
             confirmDeleteBtn.disabled = false;
             confirmDeleteBtn.textContent = 'Sim, deletar minha conta';
         }
     });
 }
-
 document.addEventListener('DOMContentLoaded', initializeAccountPage);

@@ -23,6 +23,7 @@
                 <input type="text" id="user-name" placeholder="Digite seu nome">
             </div>
             <button type="submit" class="btn-primary">Salvar Nome</button>
+            <div id="updateNameStatus" class="form-status"></div>
         </form>
         <hr>
 
@@ -37,6 +38,7 @@
                 <input type="password" id="confirm-new-password" required>
             </div>
             <button type="submit" class="btn-primary">Alterar Senha</button>
+            <div id="updatePasswordStatus" class="form-status"></div>
         </form>
         <hr>
 
@@ -45,11 +47,9 @@
             <p>A exclusão da sua conta é uma ação irreversível. Todos os seus textos serão permanentemente apagados.</p>
             <button id="delete-account-btn" class="btn-danger">Deletar Minha Conta</button>
         </div>
-        
-        <div id="status-message" class="status-message" style="display:none;"></div>
     </div>
     
-    <div id="delete-confirm-modal" class="modal-overlay" style="display: none;">
+    <div id="delete-confirm-modal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close" title="Fechar">&times;</button>
             <div class="text-center">
@@ -61,7 +61,7 @@
                     <label for="delete-password">Sua Senha</label>
                     <input type="password" id="delete-password" required>
                 </div>
-                <div id="delete-status-message" class="status-message" style="display:none;"></div>
+                <div id="delete-status-message" class="status-message"></div>
                 <div class="modal-actions">
                     <button type="button" id="cancel-delete-btn" class="btn-secondary">Cancelar</button>
                     <button type="submit" id="confirm-delete-btn" class="btn-danger">Sim, deletar minha conta</button>
