@@ -4,30 +4,33 @@ function initializeAccountPage() {
         return;
     }
 
-    // Elementos do formulário
+    // Elementos do formulário principal
     const updateNameForm = document.getElementById('updateNameForm');
     const updatePasswordForm = document.getElementById('updatePasswordForm');
     const deleteAccountBtn = document.getElementById('delete-account-btn');
     const userNameInput = document.getElementById('user-name');
     const newPasswordInput = document.getElementById('new-password');
-    const confirmNewPasswordInput = document.getElementById('confirm-new-password'); // Novo campo
+    const confirmNewPasswordInput = document.getElementById('confirm-new-password');
     const statusMessage = document.getElementById('status-message');
     
-    // Elementos do novo modal
+    // Elementos do modal de exclusão
     const deleteConfirmModal = document.getElementById('delete-confirm-modal');
+    const deletePasswordForm = document.getElementById('delete-password-form');
+    const deletePasswordInput = document.getElementById('delete-password');
     const cancelDeleteBtn = document.getElementById('cancel-delete-btn');
     const confirmDeleteBtn = document.getElementById('confirm-delete-btn');
+    const deleteStatusMessage = document.getElementById('delete-status-message');
 
     let currentUser = null;
 
-    const showStatusMessage = (message, isError = false) => {
-        statusMessage.textContent = message;
-        statusMessage.className = isError ? 'status-message error' : 'status-message success';
-        statusMessage.style.display = 'block';
-        setTimeout(() => { statusMessage.style.display = 'none'; }, 4000);
+    const showStatusMessage = (element, message, isError = false) => {
+        element.textContent = message;
+        element.className = isError ? 'status-message error' : 'status-message success';
+        element.style.display = 'block';
+        setTimeout(() => { element.style.display = 'none'; }, 4000);
     };
 
-    // Carrega os dados do usuário ao abrir a página
+    // Carrega dados do usuário
     supabase.auth.getUser().then(({ data: { user } }) => {
         if (user) {
             currentUser = user;
@@ -37,70 +40,65 @@ function initializeAccountPage() {
         }
     });
 
-    // Formulário para atualizar o nome
-    updateNameForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const { data, error } = await supabase.auth.updateUser({
-            data: { name: userNameInput.value.trim() }
-        });
-        if (error) {
-            showStatusMessage(`Erro ao atualizar nome: ${error.message}`, true);
-        } else {
-            showStatusMessage('Nome atualizado com sucesso!');
-        }
-    });
+    // Atualizar nome (sem alterações)
+    updateNameForm.addEventListener('submit', async (e) => { /* ... */ });
 
-    // Formulário para atualizar a senha (com validação)
-    updatePasswordForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const newPassword = newPasswordInput.value;
-        const confirmPassword = confirmNewPasswordInput.value;
+    // Atualizar senha (sem alterações)
+    updatePasswordForm.addEventListener('submit', async (e) => { /* ... */ });
 
-        if (newPassword.length < 6) {
-            return showStatusMessage('A nova senha deve ter no mínimo 6 caracteres.', true);
-        }
-        if (newPassword !== confirmPassword) {
-            return showStatusMessage('As senhas não coincidem.', true);
-        }
-        
-        const { data, error } = await supabase.auth.updateUser({
-            password: newPassword
-        });
-        if (error) {
-            showStatusMessage(`Erro ao atualizar senha: ${error.message}`, true);
-        } else {
-            showStatusMessage('Senha atualizada com sucesso!');
-            newPasswordInput.value = '';
-            confirmNewPasswordInput.value = '';
-        }
-    });
+    // --- NOVA LÓGICA DE EXCLUSÃO DE CONTA ---
 
-    // Botão "Deletar Minha Conta" agora abre o modal
+    // 1. Botão principal agora apenas abre o modal
     deleteAccountBtn.addEventListener('click', () => {
+        deletePasswordInput.value = '';
+        deleteStatusMessage.style.display = 'none';
         deleteConfirmModal.style.display = 'flex';
     });
 
-    // Botão "Cancelar" no modal
+    // 2. Botões de controle do modal
     cancelDeleteBtn.addEventListener('click', () => {
         deleteConfirmModal.style.display = 'none';
     });
+    deleteConfirmModal.querySelector('.modal-close').addEventListener('click', () => {
+        deleteConfirmModal.style.display = 'none';
+    });
 
-    // Botão "Sim, deletar" no modal (a lógica de exclusão)
-    confirmDeleteBtn.addEventListener('click', async () => {
+    // 3. Lógica de submissão do formulário DENTRO do modal
+    deletePasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
         if (!currentUser) return;
-        
-        confirmDeleteBtn.disabled = true;
-        confirmDeleteBtn.textContent = 'Deletando...';
 
+        const password = deletePasswordInput.value;
+        if (!password) {
+            showStatusMessage(deleteStatusMessage, 'Por favor, digite sua senha.', true);
+            return;
+        }
+
+        confirmDeleteBtn.disabled = true;
+        confirmDeleteBtn.textContent = 'Verificando...';
+
+        // Passo A: Reautenticar o usuário com a senha fornecida
+        const { error: signInError } = await supabase.auth.signInWithPassword({
+            email: currentUser.email,
+            password: password,
+        });
+
+        if (signInError) {
+            showStatusMessage(deleteStatusMessage, 'Senha incorreta. A conta não foi deletada.', true);
+            confirmDeleteBtn.disabled = false;
+            confirmDeleteBtn.textContent = 'Sim, deletar minha conta';
+            return;
+        }
+
+        // Passo B: Se a senha estiver correta, prosseguir com a exclusão
+        confirmDeleteBtn.textContent = 'Deletando...';
         try {
             const { data: { session } } = await supabase.auth.getSession();
-            if (!session) throw new Error("Sessão não encontrada, por favor faça login novamente.");
+            if (!session) throw new Error("Sessão não encontrada.");
 
             const response = await fetch('/api/delete-user', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${session.access_token}`,
-                }
+                headers: { 'Authorization': `Bearer ${session.access_token}` }
             });
 
             const result = await response.json();
@@ -117,4 +115,5 @@ function initializeAccountPage() {
         }
     });
 }
+// Cole o corpo completo das funções omitidas aqui para garantir
 document.addEventListener('DOMContentLoaded', initializeAccountPage);

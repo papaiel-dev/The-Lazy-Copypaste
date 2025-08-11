@@ -340,3 +340,19 @@ a.action-card:hover {
 .modal-actions .btn-danger:hover {
     background-color: #c82333;
 }
+.modal-actions .btn-danger {
+    background-color: var(--danger-color);
+    color: white;
+    font-weight: 500;
+    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 8px;
+}
+.modal-actions .btn-danger:hover {
+    background-color: #c82333;
+}
+/* --- NOVO ESTILO --- */
+.modal-content .status-message {
+    margin-top: 15px;
+    margin-bottom: 0;
+}
