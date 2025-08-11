@@ -1,5 +1,5 @@
 function initializeManagePage() {
-    if (typeof supabase === 'undefined') {
+    if (typeof supabase === 'undefined' || !supabase) {
         setTimeout(initializeManagePage, 100);
         return;
     }
@@ -11,7 +11,13 @@ function initializeManagePage() {
     const renderFeedbacks = (feedbacks) => {
         feedbackContainer.innerHTML = '';
         if (!feedbacks || feedbacks.length === 0) {
-            const emptyStateHTML = `<div class="empty-state"><h2>Nenhum feedback por aqui ainda!</h2><p>Que tal começar cadastrando seu primeiro feedback?</p><a href="/edit.html" class="btn-primary">Criar meu primeiro feedback</a></div>`;
+            const emptyStateHTML = `
+                <div class="empty-state">
+                    <h2>Nenhum texto por aqui ainda!</h2>
+                    <p>Que tal começar cadastrando seu primeiro texto?</p>
+                    <a href="/edit.html" class="btn-primary">Criar meu primeiro texto</a>
+                </div>
+            `;
             feedbackContainer.innerHTML = emptyStateHTML;
             return;
         }
@@ -46,12 +52,16 @@ function initializeManagePage() {
                 deleteBtn.className = 'delete-btn';
                 deleteBtn.textContent = 'Excluir';
                 deleteBtn.onclick = async () => {
-                    if (confirm(`Tem certeza que deseja excluir o feedback "${fb.title}"?`)) {
+                    if (confirm(`Tem certeza que deseja excluir o texto "${fb.title}"?`)) {
                         const { error } = await supabase.from('feedbacks').delete().eq('id', fb.id);
-                        if (error) alert('Falha ao excluir: ' + error.message);
-                        else fetchAndRender();
+                        if (error) {
+                            alert('Falha ao excluir: ' + error.message);
+                        } else {
+                            fetchAndRender();
+                        }
                     }
                 };
+                
                 buttonWrapper.appendChild(editBtn);
                 buttonWrapper.appendChild(deleteBtn);
                 itemEl.appendChild(textEl);
@@ -65,13 +75,16 @@ function initializeManagePage() {
     const fetchAndRender = async () => {
         const searchTerm = searchInput.value.trim();
         let query = supabase.from('feedbacks').select('*').order('title', { ascending: true });
+
         if (searchTerm) {
             query = query.ilike('title', `%${searchTerm}%`);
         }
+
         const { data: feedbacks, error } = await query;
+        
         if (error) {
-            console.error("Erro ao buscar feedbacks:", error);
-            feedbackContainer.innerHTML = '<p style="color:red;">Erro ao carregar dados.</p>';
+            console.error("Erro ao buscar textos:", error);
+            feedbackContainer.innerHTML = '<p style="color:red;">Erro ao carregar os dados.</p>';
         } else {
             renderFeedbacks(feedbacks);
         }
@@ -84,4 +97,5 @@ function initializeManagePage() {
 
     fetchAndRender();
 }
+
 document.addEventListener('DOMContentLoaded', initializeManagePage);

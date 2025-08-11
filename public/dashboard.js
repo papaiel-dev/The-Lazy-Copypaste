@@ -1,5 +1,5 @@
 function initializeDashboard() {
-    if (typeof supabase === 'undefined') {
+    if (typeof supabase === 'undefined' || !supabase) {
         setTimeout(initializeDashboard, 100);
         return;
     }
@@ -8,15 +8,12 @@ function initializeDashboard() {
     const userEmailSpan = document.getElementById('user-email');
     const logoutBtn = document.getElementById('logout-btn');
 
-    // --- LÓGICA CORRETA DE AUTENTICAÇÃO ---
     supabase.auth.onAuthStateChange((event, session) => {
         if (!session) {
-            // Se não houver sessão (ou após logout), redireciona
             window.location.href = '/';
             return;
         }
         
-        // Se houver sessão, preenche os dados
         const user = session.user;
         const displayName = user.user_metadata.name || user.email;
         userEmailSpan.textContent = `Olá, ${displayName}`;
@@ -27,7 +24,7 @@ function initializeDashboard() {
     
     logoutBtn.addEventListener('click', async () => {
         await supabase.auth.signOut();
-        // O onAuthStateChange cuidará do redirecionamento
     });
 }
+
 document.addEventListener('DOMContentLoaded', initializeDashboard);
