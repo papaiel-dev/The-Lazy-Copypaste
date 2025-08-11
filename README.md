@@ -12,10 +12,11 @@ Uma aplicação web completa e multiusuário, construída com uma arquitetura mo
 -   ✅ **Autenticação Completa e Segura:**
     -   Sistema de Cadastro e Login via modal.
     -   Fluxo de **Recuperação de Senha** com envio de e-mail e página de redefinição.
-    -   Gerenciamento de sessão seguro utilizando o sistema nativo do Supabase.
 -   ✅ **Gerenciamento de Conta de Usuário (LGPD):**
     -   Página dedicada para o usuário alterar seu nome e senha.
-    -   Funcionalidade de **exclusão de conta segura**, permitindo ao usuário deletar todos os seus dados de forma irreversível.
+    -   Funcionalidade de **exclusão de conta segura**, permitindo ao usuário deletar todos os seus dados.
+-   ✅ **Páginas Institucionais:**
+    -   Páginas "Sobre" e "Contato" com navegação através de um rodapé unificado.
 -   ✅ **Multi-Tenancy (Privacidade Total):**
     -   Cada texto pertence a um usuário específico.
     -   Regras de segurança a nível de banco de dados (RLS) garantem que um usuário só possa ver e manipular **seus próprios dados**.
@@ -41,7 +42,7 @@ Uma aplicação web completa e multiusuário, construída com uma arquitetura mo
 
 ## 🔧 Como Rodar o Projeto Localmente
 
-Como a aplicação publicada é um site estático, usamos um servidor de desenvolvimento simples para rodar localmente.
+Como a aplicação é um site estático que se conecta a um backend na nuvem (Supabase), usamos um servidor de desenvolvimento simples para rodar localmente.
 
 ### Pré-requisitos
 
@@ -54,31 +55,25 @@ Como a aplicação publicada é um site estático, usamos um servidor de desenvo
     ```bash
     git clone [https://github.com/papaiel-dev/The-Lazy-Copypaste.git](https://github.com/papaiel-dev/The-Lazy-Copypaste.git)
     ```
-    *(Este é o link do seu repositório, outros usuários podem clonar a partir daqui!)*
-
 2.  **Navegue até a pasta do projeto**:
     ```bash
     cd The-Lazy-Copypaste
     ```
 3.  **Configure as chaves do Supabase**:
-    * Crie um arquivo `supabaseClient.js` na raiz do projeto (ou dentro da pasta `public` se preferir, ajustando o caminho no HTML).
-    * Cole o conteúdo do arquivo `supabaseClient.js` que desenvolvemos, inserindo suas chaves do Supabase.
-
+    * No arquivo `public/supabaseClient.js`, insira suas chaves do Supabase nos locais indicados.
 4.  **Inicie o servidor local com o Live Server**:
     * Abra a pasta do projeto no VS Code.
-    * No painel de arquivos, clique com o botão direito no arquivo `index.html` (ou no arquivo que serve como sua página inicial).
+    * No painel de arquivos, clique com o botão direito no arquivo `public/index.html`.
     * Selecione **"Open with Live Server"**.
 
-    Uma nova aba do navegador abrirá automaticamente em um endereço como `http://127.0.0.1:5500`, com a sua aplicação funcionando!
+    Uma nova aba do navegador abrirá automaticamente, com a sua aplicação funcionando!
 
 ## 🛣️ Roadmap Futuro
 
--   [ ] **Construção da Página "Sobre":**
-    -   Criar uma página estática que explique a missão e a história do projeto.
--   [ ] **Construção da Página de "Contato":**
-    -   Criar uma página com informações de contato ou um formulário funcional.
 -   [ ] **Funcionalidades Avançadas de Conteúdo:**
     -   Adicionar um sistema de **Tags ou Categorias** para organizar os textos.
     -   Implementar um editor de **Rich Text** para permitir formatação (negrito, itálico, listas).
 -   [ ] **Melhorias no Dashboard:**
     -   Criar uma seção de estatísticas, como "número total de textos" ou "textos mais copiados".
+-   [ ] **Formulário de Contato Funcional:**
+    -   Integrar a página de "Contato" com um serviço (como Formspree) ou uma Função Serverless para que o envio de mensagens funcione.
