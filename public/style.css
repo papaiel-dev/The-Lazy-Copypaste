@@ -287,3 +287,73 @@ a.action-card:hover {
     margin-top: 15px;
     margin-bottom: 0;
 }
+/* ... (todo o código CSS anterior até o final da seção da Área Pública) ... */
+
+/* ================================================= */
+/* === PÁGINAS ESTÁTICAS (SOBRE, CONTATO) === */
+/* ================================================= */
+.static-page {
+    padding-top: 30px;
+    padding-bottom: 50px;
+}
+.static-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+.logo-link {
+    text-decoration: none;
+}
+.logo-link:hover {
+    text-decoration: none;
+}
+.static-page h2 {
+    font-size: 2rem;
+    color: var(--text-color-dark);
+    margin-bottom: 20px;
+}
+.static-page p {
+    font-size: 1.1rem;
+    color: var(--text-color-light);
+    margin-bottom: 1.5em;
+}
+.static-page ul {
+    list-style-type: '✓ '; /* Adiciona um checkmark como marcador */
+    padding-left: 20px;
+}
+.static-page li {
+    font-size: 1.1rem;
+    color: var(--text-color-light);
+    margin-bottom: 10px;
+}
+.contact-email a {
+    font-weight: 600;
+    font-size: 1.2rem;
+}
+
+/* --- RODAPÉ --- */
+.site-footer {
+    padding: 40px 0;
+    margin-top: 50px;
+    background-color: #e9ecef;
+    color: var(--text-color-light);
+    font-size: 0.9rem;
+    text-align: center;
+}
+.site-footer .container {
+    background: none;
+    box-shadow: none;
+    padding: 0 20px;
+}
+.site-footer nav {
+    margin-top: 10px;
+}
+.site-footer nav a {
+    color: var(--text-color-light);
+    margin: 0 15px;
+}
+
+/* ... (resto do CSS para a Área Interna e Responsividade) ... */
