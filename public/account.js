@@ -1,5 +1,5 @@
 function initializeAccountPage() {
-    if (typeof supabase === 'undefined') {
+    if (typeof supabase === 'undefined' || !supabase) {
         setTimeout(initializeAccountPage, 100);
         return;
     }
@@ -28,13 +28,13 @@ function initializeAccountPage() {
         setTimeout(() => { element.style.display = 'none'; }, 4000);
     };
 
-    supabase.auth.getUser().then(({ data: { user } }) => {
-        if (user) {
-            currentUser = user;
-            userNameInput.value = user.user_metadata.name || '';
-        } else {
+    supabase.auth.getUser().then(({ data: { user }, error }) => {
+        if (error || !user) {
             window.location.href = '/';
+            return;
         }
+        currentUser = user;
+        userNameInput.value = user.user_metadata.name || '';
     });
 
     updateNameForm.addEventListener('submit', async (e) => {
@@ -42,17 +42,14 @@ function initializeAccountPage() {
         const submitButton = updateNameForm.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         submitButton.textContent = 'Salvando...';
-
         const { data, error } = await supabase.auth.updateUser({
             data: { name: userNameInput.value.trim() }
         });
-
         if (error) {
             showStatusMessage(statusMessage, `Erro ao atualizar nome: ${error.message}`, true);
         } else {
             showStatusMessage(statusMessage, 'Nome atualizado com sucesso!');
         }
-        
         submitButton.disabled = false;
         submitButton.textContent = 'Salvar Nome';
     });
@@ -62,10 +59,8 @@ function initializeAccountPage() {
         const submitButton = updatePasswordForm.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         submitButton.textContent = 'Salvando...';
-
         const newPassword = newPasswordInput.value;
         const confirmPassword = confirmNewPasswordInput.value;
-
         if (newPassword.length < 6) {
             showStatusMessage(statusMessage, 'A nova senha deve ter no mínimo 6 caracteres.', true);
             submitButton.disabled = false;
@@ -78,9 +73,7 @@ function initializeAccountPage() {
             submitButton.textContent = 'Alterar Senha';
             return;
         }
-        
         const { data, error } = await supabase.auth.updateUser({ password: newPassword });
-
         if (error) {
             showStatusMessage(statusMessage, `Erro ao atualizar senha: ${error.message}`, true);
         } else {
@@ -88,7 +81,6 @@ function initializeAccountPage() {
             newPasswordInput.value = '';
             confirmNewPasswordInput.value = '';
         }
-
         submitButton.disabled = false;
         submitButton.textContent = 'Alterar Senha';
     });

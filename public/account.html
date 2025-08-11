@@ -1,12 +1,78 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha Conta - The Lazy Copypaste</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/style.css">
+</head>
 <body class="app-view">
     <div class="container">
+        <div class="header">
+            <h1>Minha Conta</h1>
+            <a href="/dashboard.html" class="btn-secondary">Voltar ao Dashboard</a>
+        </div>
+
+        <h3>Dados Pessoais</h3>
+        <form id="updateNameForm" class="form-section">
+            <div class="form-group">
+                <label for="user-name">Nome (como será exibido)</label>
+                <input type="text" id="user-name" placeholder="Digite seu nome">
+            </div>
+            <button type="submit" class="btn-primary">Salvar Nome</button>
+        </form>
+        <hr>
+
+        <h3>Alterar Senha</h3>
+        <form id="updatePasswordForm" class="form-section">
+            <div class="form-group">
+                <label for="new-password">Nova Senha (mínimo 6 caracteres)</label>
+                <input type="password" id="new-password" required>
+            </div>
+            <div class="form-group">
+                <label for="confirm-new-password">Confirmar Nova Senha</label>
+                <input type="password" id="confirm-new-password" required>
+            </div>
+            <button type="submit" class="btn-primary">Alterar Senha</button>
+        </form>
+        <hr>
+
         <h3>Zona de Perigo</h3>
         <div class="danger-zone">
             <p>A exclusão da sua conta é uma ação irreversível. Todos os seus textos serão permanentemente apagados.</p>
             <button id="delete-account-btn" class="btn-danger">Deletar Minha Conta</button>
         </div>
+        
+        <div id="status-message" class="status-message" style="display:none;"></div>
+    </div>
+    
+    <div id="delete-confirm-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close" title="Fechar">&times;</button>
+            <div class="text-center">
+                <h2>Confirmar Exclusão</h2>
+            </div>
+            <form id="delete-password-form">
+                <p class="form-description">Para sua segurança, por favor, digite sua senha para confirmar a exclusão permanente da sua conta.</p>
+                <div class="form-group">
+                    <label for="delete-password">Sua Senha</label>
+                    <input type="password" id="delete-password" required>
+                </div>
+                <div id="delete-status-message" class="status-message" style="display:none;"></div>
+                <div class="modal-actions">
+                    <button type="button" id="cancel-delete-btn" class="btn-secondary">Cancelar</button>
+                    <button type="submit" id="confirm-delete-btn" class="btn-danger">Sim, deletar minha conta</button>
+                </div>
+            </form>
         </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script> const supabase_module = supabase; </script>
+    <script src="/supabaseClient.js"></script>
+    <script src="/account.js"></script>
 </body>
 </html>
