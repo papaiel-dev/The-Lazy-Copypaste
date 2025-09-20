@@ -4,6 +4,16 @@ function initializeLandingPage() {
         return;
     }
     
+    // --- LÓGICA DE SESSÃO PERSISTENTE ---
+    supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+            // Se houver uma sessão ativa, redireciona para o dashboard
+            window.location.href = '/dashboard.html';
+        }
+    });
+
+    // ... (o resto da lógica da página continua o mesmo)
+
     const authModal = document.getElementById('auth-modal');
     const loginForm = document.getElementById('loginForm');
     const registerForm = document.getElementById('registerForm');
