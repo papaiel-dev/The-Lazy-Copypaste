@@ -124,6 +124,96 @@ a:hover {
 /* ================================================= */
 /* === ESTILOS DA ÁREA INTERNA (APP LOGADO) === */
 /* ================================================= */
+
+/* ... (todo o código CSS anterior até a seção da app-view) ... */
+
+/* --- ESTILOS PARA A NOVA PÁGINA "MEUS TEXTOS" --- */
+.app-view .feedback-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
+}
+.app-view .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 10px;
+}
+.app-view .item-title {
+    flex-grow: 1;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    word-break: break-word;
+}
+.app-view .feedback-item p {
+    margin-top: 0;
+    margin-bottom: 15px;
+    word-break: break-word;
+}
+.app-view .text-preview {
+    max-height: 1.5em; /* Apenas uma linha */
+    overflow: hidden;
+    position: relative;
+    transition: max-height 0.3s ease-in-out;
+}
+.app-view .text-preview::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 30px;
+    background: linear-gradient(to top, #ffffff, transparent);
+}
+.app-view .button-wrapper {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    width: 100%;
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+}
+.app-view .button-wrapper.visible {
+    opacity: 1;
+    max-height: 50px;
+}
+.app-view .show-more-btn {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: bold;
+    cursor: pointer;
+    padding: 8px 0;
+    font-size: 0.9rem;
+}
+.app-view .copy-btn {
+    background-color: var(--info-color);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
+.app-view .copy-btn:hover {
+    background-color: #138496;
+}
+.app-view .edit-btn { background-color: var(--warning-color); color: var(--text-color-dark); }
+.app-view .edit-btn:hover { background-color: #e0a800; }
+.app-view .delete-btn { background-color: var(--danger-color); color: white; }
+.app-view .delete-btn:hover { background-color: #c82333; }
+.app-view .btn-secondary { background-color: var(--secondary-color); color: white; }
+.app-view .btn-secondary:hover { background-color: var(--secondary-hover); }
+
+/* ... (resto do seu CSS) ... */
 .app-view .container {
     max-width: 900px; margin: auto; background: #fff; padding: 25px;
     border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -355,5 +445,9 @@ a.action-card:hover {
     color: var(--text-color-light);
     margin: 0 15px;
 }
-
+/* Adicione este código ao final do seu arquivo public/style.css */
+.centered-text {
+    text-align: center;
+    margin-bottom: 20px; /* Adiciona um espaço abaixo do texto */
+}
 /* ... (resto do CSS para a Área Interna e Responsividade) ... */

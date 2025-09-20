@@ -17,7 +17,7 @@ function initializeManagePage() {
 
     const openDeleteModal = (textItem) => {
         textToDelete = textItem;
-        deleteConfirmText.textContent = `Tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
+        deleteConfirmText.textContent = `Você tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
         deleteModal.style.display = 'flex';
     };
     const closeDeleteModal = () => {
@@ -76,9 +76,10 @@ function initializeManagePage() {
                     showMoreBtn.textContent = 'Mostrar Mais';
                     showMoreBtn.onclick = () => {
                         textEl.classList.toggle('text-preview');
+                        buttonWrapper.classList.toggle('visible');
                         showMoreBtn.textContent = textEl.classList.contains('text-preview') ? 'Mostrar Mais' : 'Mostrar Menos';
                     };
-                    buttonWrapper.appendChild(showMoreBtn);
+                    itemEl.appendChild(showMoreBtn);
                 }
 
                 const copyBtn = document.createElement('button');
@@ -103,7 +104,9 @@ function initializeManagePage() {
                 buttonWrapper.appendChild(copyBtn);
                 buttonWrapper.appendChild(editBtn);
                 buttonWrapper.appendChild(deleteBtn);
-                itemEl.appendChild(contentDiv);
+                
+                itemEl.appendChild(itemHeader); // ItemHeader foi movido para o topo do loop
+                itemEl.appendChild(textEl);
                 itemEl.appendChild(buttonWrapper);
                 groupEl.appendChild(itemEl);
             });
@@ -119,7 +122,6 @@ function initializeManagePage() {
         }
         
         const { data: texts, error } = await query;
-        
         if (error) {
             console.error("Erro ao buscar textos:", error);
             textsContainer.innerHTML = '<p style="color:red;">Erro ao carregar os dados.</p>';
