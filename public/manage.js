@@ -17,7 +17,7 @@ function initializeManagePage() {
 
     const openDeleteModal = (textItem) => {
         textToDelete = textItem;
-        deleteConfirmText.textContent = `Tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
+        deleteConfirmText.textContent = `Você tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
         deleteModal.style.display = 'flex';
     };
     const closeDeleteModal = () => {
@@ -54,7 +54,8 @@ function initializeManagePage() {
             grouped[category].forEach(item => {
                 const itemEl = document.createElement('div');
                 itemEl.className = 'feedback-item';
-                
+
+                // NOVO: Div que agrupa o título e os botões do topo
                 const itemHeader = document.createElement('div');
                 itemHeader.className = 'item-header';
 
@@ -62,8 +63,11 @@ function initializeManagePage() {
                 titleTextEl.className = 'item-title';
                 titleTextEl.textContent = item.title;
 
+                const topButtonsWrapper = document.createElement('div');
+                topButtonsWrapper.className = 'top-buttons-wrapper';
+
                 const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-btn btn-icon';
+                copyBtn.className = 'copy-btn';
                 copyBtn.textContent = 'Copiar';
                 copyBtn.onclick = () => {
                     navigator.clipboard.writeText(item.text);
@@ -71,28 +75,32 @@ function initializeManagePage() {
                     setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
                 };
                 
-                itemHeader.appendChild(titleTextEl);
-                itemHeader.appendChild(copyBtn);
-
-                const textEl = document.createElement('p');
-                textEl.textContent = item.text;
+                topButtonsWrapper.appendChild(copyBtn);
                 
                 const isLongText = item.text.length > 200;
-                if (isLongText) { textEl.classList.add('text-preview'); }
-
-                const buttonWrapper = document.createElement('div');
-                buttonWrapper.className = 'button-wrapper';
-                
                 if (isLongText) {
                     const showMoreBtn = document.createElement('button');
                     showMoreBtn.className = 'show-more-btn';
                     showMoreBtn.textContent = 'Mostrar Mais';
                     showMoreBtn.onclick = () => {
                         textEl.classList.toggle('text-preview');
-                        buttonWrapper.classList.toggle('visible');
+                        bottomButtonsWrapper.classList.toggle('visible');
                         showMoreBtn.textContent = textEl.classList.contains('text-preview') ? 'Mostrar Mais' : 'Mostrar Menos';
                     };
-                    itemHeader.appendChild(showMoreBtn);
+                    topButtonsWrapper.appendChild(showMoreBtn);
+                }
+
+                itemHeader.appendChild(titleTextEl);
+                itemHeader.appendChild(topButtonsWrapper);
+
+                const textEl = document.createElement('p');
+                textEl.textContent = item.text;
+                if (isLongText) { textEl.classList.add('text-preview'); }
+
+                const bottomButtonsWrapper = document.createElement('div');
+                bottomButtonsWrapper.className = 'button-wrapper';
+                if (!isLongText) {
+                    bottomButtonsWrapper.classList.add('visible');
                 }
 
                 const editBtn = document.createElement('button');
@@ -105,12 +113,12 @@ function initializeManagePage() {
                 deleteBtn.textContent = 'Excluir';
                 deleteBtn.onclick = () => openDeleteModal(item);
                 
-                buttonWrapper.appendChild(editBtn);
-                buttonWrapper.appendChild(deleteBtn);
+                bottomButtonsWrapper.appendChild(editBtn);
+                bottomButtonsWrapper.appendChild(deleteBtn);
                 
                 itemEl.appendChild(itemHeader);
                 itemEl.appendChild(textEl);
-                itemEl.appendChild(buttonWrapper);
+                itemEl.appendChild(bottomButtonsWrapper);
                 groupEl.appendChild(itemEl);
             });
             textsContainer.appendChild(groupEl);
