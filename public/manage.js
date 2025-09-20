@@ -17,7 +17,7 @@ function initializeManagePage() {
 
     const openDeleteModal = (textItem) => {
         textToDelete = textItem;
-        deleteConfirmText.textContent = `Você tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
+        deleteConfirmText.textContent = `Tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
         deleteModal.style.display = 'flex';
     };
     const closeDeleteModal = () => {
@@ -54,18 +54,31 @@ function initializeManagePage() {
             grouped[category].forEach(item => {
                 const itemEl = document.createElement('div');
                 itemEl.className = 'feedback-item';
-                const contentDiv = document.createElement('div');
-                contentDiv.className = 'item-content';
+                
+                const itemHeader = document.createElement('div');
+                itemHeader.className = 'item-header';
+
                 const titleTextEl = document.createElement('h3');
                 titleTextEl.className = 'item-title';
                 titleTextEl.textContent = item.title;
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn btn-icon';
+                copyBtn.textContent = 'Copiar';
+                copyBtn.onclick = () => {
+                    navigator.clipboard.writeText(item.text);
+                    copyBtn.textContent = 'Copiado!';
+                    setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
+                };
+                
+                itemHeader.appendChild(titleTextEl);
+                itemHeader.appendChild(copyBtn);
+
                 const textEl = document.createElement('p');
                 textEl.textContent = item.text;
                 
                 const isLongText = item.text.length > 200;
                 if (isLongText) { textEl.classList.add('text-preview'); }
-                contentDiv.appendChild(titleTextEl);
-                contentDiv.appendChild(textEl);
 
                 const buttonWrapper = document.createElement('div');
                 buttonWrapper.className = 'button-wrapper';
@@ -79,18 +92,9 @@ function initializeManagePage() {
                         buttonWrapper.classList.toggle('visible');
                         showMoreBtn.textContent = textEl.classList.contains('text-preview') ? 'Mostrar Mais' : 'Mostrar Menos';
                     };
-                    itemEl.appendChild(showMoreBtn);
+                    itemHeader.appendChild(showMoreBtn);
                 }
 
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-btn';
-                copyBtn.textContent = 'Copiar';
-                copyBtn.onclick = () => {
-                    navigator.clipboard.writeText(item.text);
-                    copyBtn.textContent = 'Copiado!';
-                    setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
-                };
-                
                 const editBtn = document.createElement('button');
                 editBtn.className = 'edit-btn';
                 editBtn.textContent = 'Editar';
@@ -101,11 +105,10 @@ function initializeManagePage() {
                 deleteBtn.textContent = 'Excluir';
                 deleteBtn.onclick = () => openDeleteModal(item);
                 
-                buttonWrapper.appendChild(copyBtn);
                 buttonWrapper.appendChild(editBtn);
                 buttonWrapper.appendChild(deleteBtn);
                 
-                itemEl.appendChild(itemHeader); // ItemHeader foi movido para o topo do loop
+                itemEl.appendChild(itemHeader);
                 itemEl.appendChild(textEl);
                 itemEl.appendChild(buttonWrapper);
                 groupEl.appendChild(itemEl);
