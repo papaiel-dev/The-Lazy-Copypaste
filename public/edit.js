@@ -10,7 +10,7 @@ function initializeEditPage() {
     const textInput = document.getElementById('text');
     const backButton = document.getElementById('backButton');
     const saveButton = document.getElementById('saveButton');
-    const statusMessage = document.getElementById('status-message');
+    const editStatus = document.getElementById('editStatus');
     const successModal = document.getElementById('success-modal');
     const successMessageText = document.getElementById('success-message-text');
     const goToManageBtn = document.getElementById('go-to-manage-btn');
@@ -20,11 +20,12 @@ function initializeEditPage() {
     const textId = urlParams.get('id');
     const isEditing = !!textId;
 
-    const showErrorMessage = (message) => {
-        statusMessage.textContent = message;
-        statusMessage.className = 'status-message error';
-        statusMessage.style.display = 'block';
-        setTimeout(() => { statusMessage.style.display = 'none'; }, 4000);
+    const showStatusMessage = (element, message, isError = false) => {
+        element.textContent = message;
+        element.className = isError ? 'status-message error' : 'form-status success';
+        if (isError) { element.classList.add('error'); } else { element.classList.remove('error'); }
+        element.style.display = 'block';
+        setTimeout(() => { element.style.display = 'none'; }, 4000);
     };
 
     const openSuccessModal = (message) => {
@@ -38,7 +39,7 @@ function initializeEditPage() {
         supabase.from('feedbacks').select('*').eq('id', textId).single()
             .then(({ data: textData, error }) => {
                 if (error || !textData) {
-                    alert('Texto não encontrado ou você não tem permissão.');
+                    showErrorMessage('Texto não encontrado ou você não tem permissão.');
                     window.location.href = '/manage.html';
                 } else {
                     titleInput.value = textData.title;
@@ -53,7 +54,12 @@ function initializeEditPage() {
         saveButton.textContent = 'Salvando...';
 
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return alert('Você não está logado.');
+        if (!user) {
+            showErrorMessage('Você não está logado.', true);
+            saveButton.disabled = false;
+            saveButton.textContent = 'Salvar';
+            return;
+        }
 
         const textDataPayload = {
             title: titleInput.value.trim(),
@@ -63,7 +69,7 @@ function initializeEditPage() {
 
         let query;
         if (isEditing) {
-            delete textDataPayload.userId; // Não se atualiza o dono do texto
+            delete textDataPayload.userId;
             query = supabase.from('feedbacks').update(textDataPayload).eq('id', textId);
         } else {
             query = supabase.from('feedbacks').insert(textDataPayload);
@@ -73,9 +79,9 @@ function initializeEditPage() {
         
         if (error) {
             if (error.message.includes('unique_user_title')) {
-                showErrorMessage('Falha ao Salvar: Você já possui um texto com este título.');
+                showStatusMessage(editStatus, 'Falha ao Salvar: Você já possui um texto com este título.', true);
             } else {
-                showErrorMessage(`Falha ao Salvar: ${error.message}`);
+                showStatusMessage(editStatus, `Falha ao Salvar: ${error.message}`, true);
             }
         } else {
             const successMsg = isEditing ? 'Texto atualizado com sucesso!' : 'Texto criado com sucesso!';

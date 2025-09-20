@@ -8,21 +8,18 @@ function initializeManagePage() {
     const searchInput = document.getElementById('searchInput');
     let debounceTimer;
 
-    // Elementos do Modal de Exclusão
     const deleteModal = document.getElementById('delete-text-modal');
     const deleteConfirmText = document.getElementById('delete-confirm-text');
     const cancelDeleteBtn = document.getElementById('cancel-delete-text-btn');
     const confirmDeleteBtn = document.getElementById('confirm-delete-text-btn');
     const modalCloseBtn = deleteModal.querySelector('.modal-close');
-
-    let textToDelete = null; // Variável para guardar o item a ser deletado
+    let textToDelete = null;
 
     const openDeleteModal = (textItem) => {
         textToDelete = textItem;
-        deleteConfirmText.textContent = `Você tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
+        deleteConfirmText.textContent = `Tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
         deleteModal.style.display = 'flex';
     };
-
     const closeDeleteModal = () => {
         textToDelete = null;
         deleteModal.style.display = 'none';
@@ -37,26 +34,62 @@ function initializeManagePage() {
         }
 
         const grouped = texts.reduce((acc, item) => {
-            (acc[item.title] = acc[item.title] || []).push(item);
+            const category = item.category || 'Sem Categoria';
+            (acc[category] = acc[category] || []).push(item);
             return acc;
         }, {});
 
-        for (const title in grouped) {
+        const sortedCategories = Object.keys(grouped).sort((a, b) => a.localeCompare(b, 'pt-BR'));
+
+        for (const category of sortedCategories) {
             const groupEl = document.createElement('div');
             groupEl.className = 'feedback-group';
             const titleEl = document.createElement('h2');
             titleEl.className = 'group-title';
-            titleEl.textContent = title;
+            titleEl.textContent = category;
             groupEl.appendChild(titleEl);
+            
+            grouped[category].sort((a, b) => a.title.localeCompare(b.title, 'pt-BR', { numeric: true, sensitivity: 'base' }));
 
-            grouped[title].forEach(item => {
+            grouped[category].forEach(item => {
                 const itemEl = document.createElement('div');
                 itemEl.className = 'feedback-item';
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'item-content';
+                const titleTextEl = document.createElement('h3');
+                titleTextEl.className = 'item-title';
+                titleTextEl.textContent = item.title;
                 const textEl = document.createElement('p');
                 textEl.textContent = item.text;
+                
+                const isLongText = item.text.length > 200;
+                if (isLongText) { textEl.classList.add('text-preview'); }
+                contentDiv.appendChild(titleTextEl);
+                contentDiv.appendChild(textEl);
+
                 const buttonWrapper = document.createElement('div');
                 buttonWrapper.className = 'button-wrapper';
+                
+                if (isLongText) {
+                    const showMoreBtn = document.createElement('button');
+                    showMoreBtn.className = 'show-more-btn';
+                    showMoreBtn.textContent = 'Mostrar Mais';
+                    showMoreBtn.onclick = () => {
+                        textEl.classList.toggle('text-preview');
+                        showMoreBtn.textContent = textEl.classList.contains('text-preview') ? 'Mostrar Mais' : 'Mostrar Menos';
+                    };
+                    buttonWrapper.appendChild(showMoreBtn);
+                }
 
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'copy-btn';
+                copyBtn.textContent = 'Copiar';
+                copyBtn.onclick = () => {
+                    navigator.clipboard.writeText(item.text);
+                    copyBtn.textContent = 'Copiado!';
+                    setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
+                };
+                
                 const editBtn = document.createElement('button');
                 editBtn.className = 'edit-btn';
                 editBtn.textContent = 'Editar';
@@ -65,12 +98,12 @@ function initializeManagePage() {
                 const deleteBtn = document.createElement('button');
                 deleteBtn.className = 'delete-btn';
                 deleteBtn.textContent = 'Excluir';
-                // Agora o botão de excluir abre o modal
                 deleteBtn.onclick = () => openDeleteModal(item);
                 
+                buttonWrapper.appendChild(copyBtn);
                 buttonWrapper.appendChild(editBtn);
                 buttonWrapper.appendChild(deleteBtn);
-                itemEl.appendChild(textEl);
+                itemEl.appendChild(contentDiv);
                 itemEl.appendChild(buttonWrapper);
                 groupEl.appendChild(itemEl);
             });
@@ -80,11 +113,13 @@ function initializeManagePage() {
 
     const fetchAndRender = async () => {
         const searchTerm = searchInput.value.trim();
-        let query = supabase.from('feedbacks').select('*').order('title', { ascending: true });
+        let query = supabase.from('feedbacks').select('*');
         if (searchTerm) {
-            query = query.ilike('title', `%${searchTerm}%`);
+            query = query.or(`title.ilike.%${searchTerm}%,text.ilike.%${searchTerm}%`);
         }
+        
         const { data: texts, error } = await query;
+        
         if (error) {
             console.error("Erro ao buscar textos:", error);
             textsContainer.innerHTML = '<p style="color:red;">Erro ao carregar os dados.</p>';
@@ -93,19 +128,16 @@ function initializeManagePage() {
         }
     };
     
-    // Listeners do Modal
     cancelDeleteBtn.addEventListener('click', closeDeleteModal);
     modalCloseBtn.addEventListener('click', closeDeleteModal);
     confirmDeleteBtn.addEventListener('click', async () => {
         if (!textToDelete) return;
-
         const { error } = await supabase.from('feedbacks').delete().eq('id', textToDelete.id);
-        
         if (error) {
-            alert('Falha ao excluir: ' + error.message); // Mantemos um alert aqui para erros inesperados
+            alert('Falha ao excluir: ' + error.message);
         } else {
             closeDeleteModal();
-            fetchAndRender(); // Recarrega a lista
+            fetchAndRender();
         }
     });
 
