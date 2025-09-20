@@ -9,5 +9,43 @@
       "src": "/(.*)",
       "dest": "/public/$1"
     }
+  ],
+  "headers": [
+    {
+      "source": "/dashboard.html",
+      "headers": [
+        {
+          "key": "Set-Cookie",
+          "value": "sb-access-token=; Max-Age=0"
+        }
+      ]
+    },
+    {
+      "source": "/manage.html",
+      "headers": [
+        {
+          "key": "Set-Cookie",
+          "value": "sb-access-token=; Max-Age=0"
+        }
+      ]
+    },
+    {
+      "source": "/edit.html",
+      "headers": [
+        {
+          "key": "Set-Cookie",
+          "value": "sb-access-token=; Max-Age=0"
+        }
+      ]
+    },
+    {
+      "source": "/account.html",
+      "headers": [
+        {
+          "key": "Set-Cookie",
+          "value": "sb-access-token=; Max-Age=0"
+        }
+      ]
+    }
   ]
 }
