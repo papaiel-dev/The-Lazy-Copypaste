@@ -53,3 +53,4 @@ app.get('/account.html', pageProtectionMiddleware, (req, res) => res.sendFile(pa
 app.listen(port, () => {
     console.log(`Servidor rodando na porta ${port}`);
 });
+//testando commit
