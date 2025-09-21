@@ -4,15 +4,15 @@
   "description": "Uma aplicação para gerenciar e copiar textos e snippets rapidamente.",
   "main": "index.js",
   "scripts": {
-    "start": "vercel dev"
+    "start": "echo \"Use a extensão Live Server no VS Code para desenvolvimento local.\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@supabase/supabase-js": "^2.43.4"
-  },
-  "devDependencies": {
-    "vercel": "^35.0.0"
+    "@supabase/supabase-js": "^2.43.4",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0"
   }
 }
