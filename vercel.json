@@ -2,12 +2,8 @@
   "version": 2,
   "routes": [
     {
-      "src": "/api/config",
-      "dest": "/api/config.js"
-    },
-    {
-      "src": "/api/delete-user",
-      "dest": "/api/delete-user.js"
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
     },
     {
       "src": "/(.*)",
