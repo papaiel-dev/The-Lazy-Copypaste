@@ -1,16 +1,39 @@
-// Carrega as variáveis de ambiente do arquivo .env
 require('dotenv').config();
 
 const express = require('express');
 const path = require('path');
+const cookieParser = require('cookie-parser');
+const { createClient } = require('@supabase/supabase-js');
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
-// Middleware para servir todos os nossos arquivos estáticos (HTML, CSS, JS)
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Rota para simular a Função Serverless e fornecer as chaves do Supabase
+const supabaseAdmin = createClient(
+  process.env.PUBLIC_SUPABASE_URL,
+  process.env.SUPABASE_SERVICE_KEY
+);
+
+const pageProtectionMiddleware = async (req, res, next) => {
+    const token = req.cookies['sb-access-token'];
+    if (!token) {
+        return res.redirect('/');
+    }
+    
+    const { data: { user }, error } = await supabaseAdmin.auth.getUser(token);
+    if (error || !user) {
+        res.clearCookie('sb-access-token', { path: '/' });
+        res.clearCookie('sb-refresh-token', { path: '/' });
+        return res.redirect('/');
+    }
+    req.user = user;
+    next();
+};
+
 app.get('/api/config', (req, res) => {
     res.json({
         supabaseUrl: process.env.PUBLIC_SUPABASE_URL,
@@ -18,21 +41,15 @@ app.get('/api/config', (req, res) => {
     });
 });
 
-// Uma rota "catch-all" para garantir que o refresh em páginas internas funcione
-// Ex: Se você estiver em /dashboard.html e der F5, ele não dará 404.
-app.get('*', (req, res) => {
-    // Verifica se o arquivo solicitado existe na pasta public
-    const filePath = path.join(__dirname, 'public', req.path);
-    if (require('fs').existsSync(filePath) && !require('fs').lstatSync(filePath).isDirectory()) {
-        res.sendFile(filePath);
-    } else {
-        // Se não encontrar o arquivo, serve o index.html (bom para Single Page Apps)
-        res.sendFile(path.join(__dirname, 'public', 'index.html'));
-    }
-});
+app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
+app.get('/reset-password.html', (req, res) => res.sendFile(path.join(__dirname, 'public', 'reset-password.html')));
+app.get('/dashboard.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'dashboard.html')));
+app.get('/manage.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'manage.html')));
+app.get('/search.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'search.html')));
+app.get('/edit.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'edit.html')));
+app.get('/edit/:id', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'edit.html')));
+app.get('/account.html', pageProtectionMiddleware, (req, res) => res.sendFile(path.join(__dirname, 'public', 'account.html')));
 
-
-// Inicia o servidor
 app.listen(port, () => {
-    console.log(`Servidor de desenvolvimento local rodando em http://localhost:${port}`);
+    console.log(`Servidor rodando na porta ${port}`);
 });
