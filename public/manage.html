@@ -3,30 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciar Textos - Lazy Copypaste</title>
+    <title>Meus Textos - Lazy Copypaste</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
 </head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Meus Textos</h1>
+<body class="admin-page">
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="logo">LazyCopy</div>
             <nav>
-                <a href="/dashboard.html">Voltar</a>
-                <a href="/edit.html" class="btn-primary">Novo Texto</a>
+                <a href="/dashboard.html">Início</a>
+                <a href="/manage.html" class="active">Meus Textos</a>
+                <a href="/edit.html" class="btn-new">+ Novo Texto</a>
             </nav>
-        </header>
-
-        <div class="toolbar">
-            <input type="text" id="searchInput" placeholder="Pesquisar...">
-            <div class="backup-group">
-                <button onclick="exportBackup()" class="btn-secondary">Exportar Backup (PC -> Celular)</button>
+            <div class="sidebar-footer">
+                <button onclick="exportBackup()" class="btn-outline">Exportar Backup</button>
                 <input type="file" id="importFile" style="display:none" onchange="importBackup(event)">
-                <button onclick="document.getElementById('importFile').click()" class="btn-secondary">Importar Backup</button>
+                <button onclick="document.getElementById('importFile').click()" class="btn-outline">Importar</button>
             </div>
-        </div>
+        </aside>
 
-        <div id="textsContainer"></div>
+        <main class="main-content">
+            <header class="content-header">
+                <h2>Gerenciar Textos</h2>
+                <div class="search-bar">
+                    <input type="text" id="searchInput" placeholder="Pesquisar por título ou conteúdo...">
+                </div>
+            </header>
+
+            <div id="textsContainer" class="texts-grid">
+                </div>
+        </main>
     </div>
 
     <script src="/database.js"></script>
