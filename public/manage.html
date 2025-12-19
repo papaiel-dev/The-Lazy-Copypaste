@@ -3,39 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Textos - Lazy Copypaste</title>
+    <title>Gerenciar Textos - Lazy Copypaste</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
 </head>
-<body class="admin-page">
-    <div class="app-layout">
-        <aside class="sidebar">
-            <div class="logo">LazyCopy</div>
+<body class="app-view">
+    <div class="container">
+        <header class="header">
+            <h1>Meus Textos</h1>
             <nav>
-                <a href="/dashboard.html">Início</a>
-                <a href="/manage.html" class="active">Meus Textos</a>
-                <a href="/edit.html" class="btn-new">+ Novo Texto</a>
+                <a href="/dashboard.html" class="btn-secondary">Voltar</a>
+                <a href="/edit.html" class="btn-primary">+ Novo Texto</a>
             </nav>
-            <div class="sidebar-footer">
-                <button onclick="exportBackup()" class="btn-outline">Exportar Backup</button>
-                <input type="file" id="importFile" style="display:none" onchange="importBackup(event)">
-                <button onclick="document.getElementById('importFile').click()" class="btn-outline">Importar</button>
+        </header>
+
+        <div class="search-section">
+            <input type="text" id="searchInput" placeholder="Pesquisar por título ou conteúdo...">
+        </div>
+
+        <div class="backup-bar">
+            <button onclick="exportBackup()" class="btn-backup">Exportar Backup</button>
+            <input type="file" id="importFile" style="display:none" onchange="importBackup(event)">
+            <button onclick="document.getElementById('importFile').click()" class="btn-backup">Importar Backup</button>
+        </div>
+
+        <div id="textsContainer">
             </div>
-        </aside>
-
-        <main class="main-content">
-            <header class="content-header">
-                <h2>Gerenciar Textos</h2>
-                <div class="search-bar">
-                    <input type="text" id="searchInput" placeholder="Pesquisar por título ou conteúdo...">
-                </div>
-            </header>
-
-            <div id="textsContainer" class="texts-grid">
-                </div>
-        </main>
     </div>
 
     <script src="/database.js"></script>
