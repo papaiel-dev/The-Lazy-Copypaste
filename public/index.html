@@ -6,10 +6,20 @@
     <title>The Lazy Copypaste</title>
     <link rel="stylesheet" href="/style.css">
 </head>
-<body>
-    <script>
-        // Redireciona direto para o dashboard, pois os dados são locais
-        window.location.href = '/dashboard.html';
-    </script>
+<body class="public-view">
+    <div class="container">
+        <header class="landing-header">
+            <h1>LazyCopy</h1>
+            <nav>
+                <a href="/dashboard.html" class="btn-primary">Acessar Meu Painel</a>
+            </nav>
+        </header>
+        <section class="hero-section">
+            <h2>Gerencie seus textos de forma local e segura.</h2>
+            <p>Seus dados não saem do seu navegador. Sem contas, sem senhas, apenas produtividade.</p>
+            <br>
+            <a href="/dashboard.html" class="btn-primary" style="padding: 15px 30px; font-size: 1.2rem;">Começar Agora</a>
+        </section>
+    </div>
 </body>
 </html>

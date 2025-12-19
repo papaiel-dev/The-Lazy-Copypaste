@@ -2,10 +2,13 @@ async function initializeEditPage() {
     const form = document.getElementById('editForm');
     const titleInput = document.getElementById('title');
     const textInput = document.getElementById('text');
+    const pageTitle = document.getElementById('pageTitle');
+    
     const urlParams = new URLSearchParams(window.location.search);
     const textId = urlParams.get('id');
 
     if (textId) {
+        pageTitle.textContent = "Editar Texto";
         const item = await db.feedbacks.get(parseInt(textId));
         if (item) {
             titleInput.value = item.title;

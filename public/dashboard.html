@@ -3,38 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - The Lazy Copypaste</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <title>Dashboard - Lazy Copypaste</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 <body class="app-view">
     <div class="container">
         <header class="header">
-            <h1>Meu Dashboard</h1>
-            <div id="user-info" style="display: none;">
-                <span id="user-email"></span>
-                <a href="/account.html" class="btn-secondary">Minha Conta</a>
-                <button id="logout-btn" class="btn-danger">Sair</button>
-            </div>
+            <h1>Início</h1>
+            <nav>
+                <a href="/index.html" class="btn-secondary">Sair</a>
+            </nav>
         </header>
-
-        <div class="centered-text">
-            <p>Bem-vindo! Acesse a área principal para começar a usar.</p>
-        </div>
         
-        <div class="home-actions">
-            <a href="/manage.html" class="action-card">
-                <h2>Meus Textos</h2>
-                <p>Navegue, busque, crie, edite, exclua e copie seus textos em um único lugar.</p>
+        <div class="home-actions" style="display: flex; gap: 20px; justify-content: center; margin-top: 40px;">
+            <a href="/edit.html" class="btn-primary" style="padding: 30px; text-align: center; width: 200px;">
+                <h2>+ Novo</h2>
+                <p>Criar novo texto</p>
+            </a>
+            <a href="/manage.html" class="btn-secondary" style="padding: 30px; text-align: center; width: 200px; background-color: var(--primary-color);">
+                <h2>📋 Ver Todos</h2>
+                <p>Gerenciar salvos</p>
             </a>
         </div>
     </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script> const supabase_module = supabase; </script>
-    <script src="/supabaseClient.js"></script>
-    <script src="/dashboard.js"></script>
 </body>
 </html>
