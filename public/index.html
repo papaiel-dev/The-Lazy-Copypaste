@@ -3,23 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Lazy Copypaste</title>
+    <title>The Lazy Copypaste - Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
 </head>
 <body class="public-view">
     <div class="container">
         <header class="landing-header">
-            <h1>LazyCopy</h1>
+            <h1>The Lazy Copypaste</h1>
             <nav>
-                <a href="/dashboard.html" class="btn-primary">Acessar Meu Painel</a>
+                <a href="/dashboard.html" class="btn-primary">Acessar Painel</a>
             </nav>
         </header>
+
         <section class="hero-section">
-            <h2>Gerencie seus textos de forma local e segura.</h2>
-            <p>Seus dados não saem do seu navegador. Sem contas, sem senhas, apenas produtividade.</p>
-            <br>
-            <a href="/dashboard.html" class="btn-primary" style="padding: 15px 30px; font-size: 1.2rem;">Começar Agora</a>
+            <h2 style="color: var(--text-color-dark); font-size: 2.8rem; letter-spacing: -1px;">
+                Produtividade sem <span style="color: var(--primary-color);">esforço.</span>
+            </h2>
+            <p style="font-size: 1.2rem; color: var(--text-color-light); max-width: 650px; margin: 20px auto 40px auto;">
+                O gerenciador de textos local que mantém seus dados onde eles devem estar: <strong>com você.</strong> Sem contas, sem nuvem, apenas o seu navegador.
+            </p>
+            
+            <div style="display: flex; gap: 15px; justify-content: center; flex-wrap: wrap;">
+                <a href="/dashboard.html" class="btn-primary" style="padding: 18px 35px; font-size: 1.1rem; box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.3);">
+                    Começar a usar agora
+                </a>
+                <a href="#saiba-mais" class="btn-secondary" style="padding: 18px 35px; font-size: 1.1rem;">
+                    Como funciona?
+                </a>
+            </div>
         </section>
+
+        <footer class="site-footer" style="background: transparent; border-top: 1px solid var(--border-color); margin-top: 80px;">
+            <div class="container">
+                <p>&copy; 2024 The Lazy Copypaste. Privacidade total por padrão.</p>
+            </div>
+        </footer>
     </div>
-</body>
+
+    </body>
 </html>
