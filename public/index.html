@@ -3,85 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bem-vindo ao The Lazy Copypaste</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>The Lazy Copypaste</title>
     <link rel="stylesheet" href="/style.css">
 </head>
-<body class="public-view">
-    <div class="container landing-page">
-        <header class="landing-header">
-            <h1>The Lazy Copypaste</h1>
-            <nav>
-                <button class="btn-secondary" data-action="login">Login</button>
-                <button class="btn-primary" data-action="register">Cadastre-se Grátis</button>
-            </nav>
-        </header>
-        <main class="hero-section">
-            <h2>O fim da digitação repetitiva. Guarde, encontre e copie em segundos.</h2>
-            <p>Pare de procurar por textos prontos em blocos de notas e planilhas. Centralize todas as suas respostas, snippets e notas em um só lugar.</p>
-            <button class="btn-primary btn-large" data-action="register">Comece a Usar Agora</button>
-        </main>
-    </div>
-
-    <div id="auth-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close" title="Fechar">&times;</button>
-            <div class="modal-tabs">
-                <button class="tab-link active" data-tab="login">Login</button>
-                <button class="tab-link" data-tab="register">Cadastro</button>
-            </div>
-            <div id="login-tab" class="tab-content active">
-                <form id="loginForm">
-                    <p class="form-description">Acesse sua conta para continuar.</p>
-                    <div class="form-group"><label for="login-email">E-mail</label><input type="email" id="login-email" required></div>
-                    <div class="form-group">
-                        <div class="label-wrapper"><label for="login-password">Senha</label><button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button></div>
-                        <input type="password" id="login-password" required>
-                    </div>
-                    <div class="form-link-wrapper"><a href="#" id="forgot-password-link">Esqueci minha senha</a></div>
-                    <button type="submit" class="btn-primary">Entrar</button>
-                </form>
-            </div>
-            <div id="register-tab" class="tab-content">
-                <form id="registerForm">
-                    <p class="form-description">Crie sua conta gratuitamente.</p>
-                    <div class="form-group"><label for="register-email">E-mail</label><input type="email" id="register-email" required></div>
-                    <div class="form-group">
-                        <div class="label-wrapper"><label for="register-password">Senha</label><button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button></div>
-                        <input type="password" id="register-password" required>
-                    </div>
-                    <div class="form-group">
-                        <div class="label-wrapper"><label for="register-confirm-password">Confirmar Senha</label><button type="button" class="toggle-password-label" title="Mostrar senha">👁️</button></div>
-                        <input type="password" id="register-confirm-password" required>
-                    </div>
-                    <button type="submit" class="btn-primary">Cadastrar</button>
-                </form>
-            </div>
-            <div id="modal-status-message" class="status-message"></div>
-        </div>
-    </div>
-
-    <div id="recovery-modal" class="modal-overlay">
-        <div class="modal-content">
-            <button class="modal-close" title="Fechar">&times;</button>
-            <div class="text-center"><h2>Redefinir Senha</h2></div>
-            <div id="recovery-step-1">
-                <form id="recoveryForm">
-                    <p class="form-description">Digite seu e-mail e enviaremos um link para redefinir sua senha.</p>
-                    <div class="form-group"><label for="recovery-email">E-mail</label><input type="email" id="recovery-email" required></div>
-                    <button type="submit" class="btn-primary">Enviar Link</button>
-                </form>
-            </div>
-            <div id="recovery-step-2" class="text-center"><p class="form-description"></p></div>
-            <div id="recovery-status-message" class="status-message"></div>
-        </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script> const supabase_module = supabase; </script>
-    <script src="/supabaseClient.js"></script>
-    <script src="/landing.js"></script>
+<body>
+    <script>
+        // Redireciona direto para o dashboard, pois os dados são locais
+        window.location.href = '/dashboard.html';
+    </script>
 </body>
 </html>

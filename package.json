@@ -1,18 +1,12 @@
 {
-  "name": "lazy-copypaste",
-  "version": "1.0.0",
-  "description": "Uma aplicação para gerenciar e copiar textos e snippets rapidamente.",
+  "name": "lazy-copypaste-local",
+  "version": "1.1.0",
+  "description": "Gerenciador de textos local",
   "main": "index.js",
   "scripts": {
-    "start": "echo \"Use a extensão Live Server no VS Code para desenvolvimento local.\" && exit 1"
+    "start": "node index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "@supabase/supabase-js": "^2.43.4",
-    "cookie-parser": "^1.4.7",
-    "dotenv": "^17.2.2",
-    "express": "^5.1.0"
+    "express": "^4.18.2"
   }
 }

@@ -3,39 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Textos - The Lazy Copypaste</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>Gerenciar Textos - Lazy Copypaste</title>
     <link rel="stylesheet" href="/style.css">
+    <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
 </head>
-<body class="app-view">
+<body>
     <div class="container">
-        <div class="header">
+        <header>
             <h1>Meus Textos</h1>
-            <a href="/dashboard.html" class="btn-secondary">Voltar ao Dashboard</a> 
-        </div>
-        <a href="/edit.html" class="btn-new" style="margin-bottom: 20px; display: inline-block;">Criar Novo Texto</a>
-        <input type="text" id="searchInput" placeholder="Buscar por título ou palavra-chave...">
-        <div id="textsContainer">
+            <nav>
+                <a href="/dashboard.html">Voltar</a>
+                <a href="/edit.html" class="btn-primary">Novo Texto</a>
+            </nav>
+        </header>
+
+        <div class="toolbar">
+            <input type="text" id="searchInput" placeholder="Pesquisar...">
+            <div class="backup-group">
+                <button onclick="exportBackup()" class="btn-secondary">Exportar Backup (PC -> Celular)</button>
+                <input type="file" id="importFile" style="display:none" onchange="importBackup(event)">
+                <button onclick="document.getElementById('importFile').click()" class="btn-secondary">Importar Backup</button>
             </div>
+        </div>
+
+        <div id="textsContainer"></div>
     </div>
 
-    <div id="delete-text-modal" class="modal-overlay">
-        <div class="modal-content text-center">
-            <button class="modal-close" title="Fechar">&times;</button>
-            <h2>Confirmar Exclusão</h2>
-            <p id="delete-confirm-text">Você tem certeza que deseja excluir este texto?</p>
-            <div class="modal-actions">
-                <button id="cancel-delete-text-btn" class="btn-secondary">Cancelar</button>
-                <button id="confirm-delete-text-btn" class="btn-danger">Sim, excluir</button>
-            </div>
-        </div>
-    </div>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script> const supabase_module = supabase; </script>
-    <script src="/supabaseClient.js"></script>
+    <script src="/database.js"></script>
     <script src="/manage.js"></script>
 </body>
 </html>

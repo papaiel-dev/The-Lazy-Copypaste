@@ -1,164 +1,72 @@
-function initializeManagePage() {
-    if (typeof supabase === 'undefined' || !supabase) {
-        setTimeout(initializeManagePage, 100);
-        return;
-    }
-
+async function initializeManagePage() {
     const textsContainer = document.getElementById('textsContainer');
     const searchInput = document.getElementById('searchInput');
-    let debounceTimer;
-
-    const deleteModal = document.getElementById('delete-text-modal');
-    const deleteConfirmText = document.getElementById('delete-confirm-text');
-    const cancelDeleteBtn = document.getElementById('cancel-delete-text-btn');
-    const confirmDeleteBtn = document.getElementById('confirm-delete-text-btn');
-    const modalCloseBtn = deleteModal.querySelector('.modal-close');
-    let textToDelete = null;
-
-    const openDeleteModal = (textItem) => {
-        textToDelete = textItem;
-        deleteConfirmText.textContent = `Você tem certeza que deseja excluir o texto "${textItem.title}"? Esta ação não pode ser desfeita.`;
-        deleteModal.style.display = 'flex';
-    };
-    const closeDeleteModal = () => {
-        textToDelete = null;
-        deleteModal.style.display = 'none';
-    };
 
     const renderTexts = (texts) => {
         textsContainer.innerHTML = '';
-        if (!texts || texts.length === 0) {
-            const emptyStateHTML = `<div class="empty-state"><h2>Nenhum texto por aqui ainda!</h2><p>Que tal começar cadastrando seu primeiro texto?</p><a href="/edit.html" class="btn-primary">Criar meu primeiro texto</a></div>`;
-            textsContainer.innerHTML = emptyStateHTML;
+        if (texts.length === 0) {
+            textsContainer.innerHTML = '<p>Nenhum texto encontrado.</p>';
             return;
         }
 
-        const grouped = texts.reduce((acc, item) => {
-            const category = item.category || 'Sem Categoria';
-            (acc[category] = acc[category] || []).push(item);
-            return acc;
-        }, {});
-
-        const sortedCategories = Object.keys(grouped).sort((a, b) => a.localeCompare(b, 'pt-BR'));
-
-        for (const category of sortedCategories) {
-            const groupEl = document.createElement('div');
-            groupEl.className = 'feedback-group';
-            const titleEl = document.createElement('h2');
-            titleEl.className = 'group-title';
-            titleEl.textContent = category;
-            groupEl.appendChild(titleEl);
-            
-            grouped[category].sort((a, b) => a.title.localeCompare(b.title, 'pt-BR', { numeric: true, sensitivity: 'base' }));
-
-            grouped[category].forEach(item => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'feedback-item';
-
-                // NOVO: Div que agrupa o título e os botões do topo
-                const itemHeader = document.createElement('div');
-                itemHeader.className = 'item-header';
-
-                const titleTextEl = document.createElement('h3');
-                titleTextEl.className = 'item-title';
-                titleTextEl.textContent = item.title;
-
-                const topButtonsWrapper = document.createElement('div');
-                topButtonsWrapper.className = 'top-buttons-wrapper';
-
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-btn';
-                copyBtn.textContent = 'Copiar';
-                copyBtn.onclick = () => {
-                    navigator.clipboard.writeText(item.text);
-                    copyBtn.textContent = 'Copiado!';
-                    setTimeout(() => { copyBtn.textContent = 'Copiar'; }, 2000);
-                };
-                
-                topButtonsWrapper.appendChild(copyBtn);
-                
-                const isLongText = item.text.length > 200;
-                if (isLongText) {
-                    const showMoreBtn = document.createElement('button');
-                    showMoreBtn.className = 'show-more-btn';
-                    showMoreBtn.textContent = 'Mostrar Mais';
-                    showMoreBtn.onclick = () => {
-                        textEl.classList.toggle('text-preview');
-                        bottomButtonsWrapper.classList.toggle('visible');
-                        showMoreBtn.textContent = textEl.classList.contains('text-preview') ? 'Mostrar Mais' : 'Mostrar Menos';
-                    };
-                    topButtonsWrapper.appendChild(showMoreBtn);
-                }
-
-                itemHeader.appendChild(titleTextEl);
-                itemHeader.appendChild(topButtonsWrapper);
-
-                const textEl = document.createElement('p');
-                textEl.textContent = item.text;
-                if (isLongText) { textEl.classList.add('text-preview'); }
-
-                const bottomButtonsWrapper = document.createElement('div');
-                bottomButtonsWrapper.className = 'button-wrapper';
-                if (!isLongText) {
-                    bottomButtonsWrapper.classList.add('visible');
-                }
-
-                const editBtn = document.createElement('button');
-                editBtn.className = 'edit-btn';
-                editBtn.textContent = 'Editar';
-                editBtn.onclick = () => window.location.href = `/edit.html?id=${item.id}`;
-
-                const deleteBtn = document.createElement('button');
-                deleteBtn.className = 'delete-btn';
-                deleteBtn.textContent = 'Excluir';
-                deleteBtn.onclick = () => openDeleteModal(item);
-                
-                bottomButtonsWrapper.appendChild(editBtn);
-                bottomButtonsWrapper.appendChild(deleteBtn);
-                
-                itemEl.appendChild(itemHeader);
-                itemEl.appendChild(textEl);
-                itemEl.appendChild(bottomButtonsWrapper);
-                groupEl.appendChild(itemEl);
-            });
-            textsContainer.appendChild(groupEl);
-        }
+        texts.forEach(item => {
+            const div = document.createElement('div');
+            div.className = 'feedback-item';
+            div.innerHTML = `
+                <h3>${item.title}</h3>
+                <p>${item.text}</p>
+                <div class="actions">
+                    <button onclick="copyToClipboard('${item.text.replace(/'/g, "\\'")}')">Copiar</button>
+                    <button onclick="window.location.href='/edit.html?id=${item.id}'">Editar</button>
+                    <button onclick="deleteText(${item.id})">Excluir</button>
+                </div>
+            `;
+            textsContainer.appendChild(div);
+        });
     };
 
     const fetchAndRender = async () => {
-        const searchTerm = searchInput.value.trim();
-        let query = supabase.from('feedbacks').select('*');
-        if (searchTerm) {
-            query = query.or(`title.ilike.%${searchTerm}%,text.ilike.%${searchTerm}%`);
+        const term = searchInput.value.toLowerCase();
+        let texts = await db.feedbacks.reverse().toArray();
+        if (term) {
+            texts = texts.filter(t => t.title.toLowerCase().includes(term) || t.text.toLowerCase().includes(term));
         }
-        
-        const { data: texts, error } = await query;
-        if (error) {
-            console.error("Erro ao buscar textos:", error);
-            textsContainer.innerHTML = '<p style="color:red;">Erro ao carregar os dados.</p>';
-        } else {
-            renderTexts(texts);
-        }
+        renderTexts(texts);
     };
-    
-    cancelDeleteBtn.addEventListener('click', closeDeleteModal);
-    modalCloseBtn.addEventListener('click', closeDeleteModal);
-    confirmDeleteBtn.addEventListener('click', async () => {
-        if (!textToDelete) return;
-        const { error } = await supabase.from('feedbacks').delete().eq('id', textToDelete.id);
-        if (error) {
-            alert('Falha ao excluir: ' + error.message);
-        } else {
-            closeDeleteModal();
+
+    window.copyToClipboard = (txt) => {
+        navigator.clipboard.writeText(txt);
+        alert("Copiado!");
+    };
+
+    window.deleteText = async (id) => {
+        if (confirm("Excluir permanentemente?")) {
+            await db.feedbacks.delete(id);
             fetchAndRender();
         }
-    });
+    };
 
-    searchInput.addEventListener('input', () => {
-        clearTimeout(debounceTimer);
-        debounceTimer = setTimeout(fetchAndRender, 300);
-    });
+    window.exportBackup = async () => {
+        const data = await db.feedbacks.toArray();
+        const blob = new Blob([JSON.stringify(data)], {type: "application/json"});
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `backup_lazy_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+    };
 
+    window.importBackup = (event) => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const data = JSON.parse(e.target.result);
+            await db.feedbacks.bulkPut(data);
+            alert("Backup importado!");
+            fetchAndRender();
+        };
+        reader.readAsText(event.target.files[0]);
+    };
+
+    searchInput.addEventListener('input', fetchAndRender);
     fetchAndRender();
 }
 document.addEventListener('DOMContentLoaded', initializeManagePage);
