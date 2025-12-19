@@ -7,7 +7,7 @@ async function initializeManagePage() {
         if (!texts || texts.length === 0) {
             textsContainer.innerHTML = `
                 <div style="text-align: center; padding: 60px; color: var(--text-color-light);">
-                    <p>Você ainda não tem textos salvos.</p>
+                    <p>Ainda não tens textos salvos. Cria um novo para começar!</p>
                 </div>`;
             return;
         }
@@ -18,12 +18,12 @@ async function initializeManagePage() {
             div.innerHTML = `
                 <div class="item-header">
                     <h3 class="item-title">${item.title || 'Sem título'}</h3>
-                    <button class="copy-btn" onclick="copyToClipboard('${item.text.replace(/'/g, "\\'").replace(/\n/g, "\\n")}', this)">Copiar</button>
+                    <button class="btn-primary" style="padding: 8px 16px; font-size: 0.85rem; background-color: var(--success-color);" onclick="copyToClipboard('${item.text.replace(/'/g, "\\'").replace(/\n/g, "\\n")}', this)">Copiar</button>
                 </div>
                 <p>${item.text}</p>
-                <div class="actions">
-                    <button class="edit-btn" onclick="window.location.href='/edit.html?id=${item.id}'">Editar</button>
-                    <button class="delete-btn" onclick="deleteText(${item.id})">Excluir</button>
+                <div class="item-actions">
+                    <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem;" onclick="window.location.href='/edit.html?id=${item.id}'">Editar</button>
+                    <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.8rem; color: var(--danger-color); border-color: #fee2e2;" onclick="deleteText(${item.id})">Excluir</button>
                 </div>
             `;
             textsContainer.appendChild(div);
@@ -46,16 +46,12 @@ async function initializeManagePage() {
         navigator.clipboard.writeText(text).then(() => {
             const originalText = btn.textContent;
             btn.textContent = 'Copiado!';
-            btn.style.backgroundColor = '#059669';
-            setTimeout(() => { 
-                btn.textContent = originalText; 
-                btn.style.backgroundColor = '';
-            }, 2000);
+            setTimeout(() => { btn.textContent = originalText; }, 2000);
         });
     };
 
     window.deleteText = async (id) => {
-        if (confirm("Deseja apagar este texto?")) {
+        if (confirm("Apagar este texto permanentemente?")) {
             await db.feedbacks.delete(id);
             fetchAndRender();
         }
@@ -75,7 +71,7 @@ async function initializeManagePage() {
         reader.onload = async (e) => {
             const data = JSON.parse(e.target.result);
             await db.feedbacks.bulkPut(data);
-            alert("Backup restaurado!");
+            alert("Backup restaurado com sucesso!");
             fetchAndRender();
         };
         reader.readAsText(event.target.files[0]);
