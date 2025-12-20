@@ -4,6 +4,9 @@ async function initializeEditPage() {
     const textInput = document.getElementById('text');
     const pageTitle = document.getElementById('pageTitle');
     
+    // UX: Foca no título assim que a página carrega
+    titleInput.focus();
+
     const urlParams = new URLSearchParams(window.location.search);
     const textId = urlParams.get('id');
 

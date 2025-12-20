@@ -3,28 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Texto - Lazy Copypaste</title>
+    <title>The Lazy Copypaste - Editar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
 </head>
-<body class="app-view">
+<body>
     <div class="container">
         <header class="header">
             <h1 id="pageTitle">Novo Texto</h1>
-            <a href="/manage.html" class="btn-secondary">Cancelar</a>
+            <a href="/manage.html" class="btn btn-secondary">Cancelar</a>
         </header>
 
-        <form id="editForm" style="display: flex; flex-direction: column; gap: 15px;">
-            <div class="form-group">
-                <label>Título</label>
-                <input type="text" id="title" placeholder="Ex: Resposta Padrão Suporte" required style="width: 100%; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color);">
-            </div>
-            <div class="form-group">
-                <label>Conteúdo do Texto</label>
-                <textarea id="text" placeholder="Cole seu texto aqui..." required style="width: 100%; min-height: 200px; padding: 10px; border-radius: 8px; border: 1px solid var(--border-color); font-family: inherit;"></textarea>
-            </div>
-            <button type="submit" class="btn-primary" style="width: 100%; padding: 15px;">Salvar no Dispositivo</button>
-        </form>
+        <div class="edit-form-card">
+            <form id="editForm">
+                <div class="form-group">
+                    <label for="title">Título do Texto</label>
+                    <input type="text" id="title" placeholder="Ex: Script de Atendimento" required>
+                </div>
+                <div class="form-group">
+                    <label for="text">Conteúdo</label>
+                    <textarea id="text" placeholder="Cole seu texto aqui..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 15px;">Salvar no Dispositivo</button>
+            </form>
+        </div>
     </div>
 
     <script src="/database.js"></script>
