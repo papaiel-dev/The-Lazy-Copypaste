@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Lazy Copypaste - Gerenciar</title>
+    <title>Gerenciar - The Lazy Copypaste</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
     <script src="https://unpkg.com/dexie/dist/dexie.js"></script>
@@ -30,6 +30,15 @@
 
         <div id="textsContainer"></div>
     </div>
+
+    <div id="customModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="modalTitle" class="modal-title">Título</h3>
+            <p id="modalText" class="modal-text">Texto da mensagem.</p>
+            <div id="modalButtons" class="modal-buttons"></div>
+        </div>
+    </div>
+
     <script src="/database.js"></script>
     <script src="/manage.js"></script>
 </body>
