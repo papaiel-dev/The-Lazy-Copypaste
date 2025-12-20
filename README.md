@@ -1,4 +1,4 @@
-# 📝 The Lazy Copypaste
+# 📝 The Lazy Copypaste 2.0
 
 O **The Lazy Copypaste** é um gerenciador de textos e snippets focado em produtividade e privacidade extrema. Desenvolvido para quem precisa de agilidade no "copia e cola" do dia a dia, ele mantém todos os seus dados salvos localmente, direto no seu navegador.
 
