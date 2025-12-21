@@ -6,21 +6,91 @@
     <title>The Lazy Copypaste - Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/style.css">
+    <style>
+        body.christmas-theme {
+            background: radial-gradient(circle at top, #2d1b4d 0%, #0f172a 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Neve caindo */
+        .snowflakes {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
+        }
+
+        .hero-title { color: #fff !important; }
+        .hero-title span { color: #fbbf24 !important; text-shadow: 0 0 15px rgba(251, 191, 36, 0.5); }
+        .hero-subtitle { color: #cbd5e1 !important; margin-bottom: 50px !important; } /* Aumentei o respiro aqui */
+
+        /* Decoração de Gorro no Logo */
+        .logo-container { position: relative; display: inline-block; }
+        .logo-container::after {
+            content: "🎅"; position: absolute; top: -15px; left: -15px;
+            font-size: 1.5rem; transform: rotate(-20deg);
+        }
+
+        .btn-primary { 
+            background: #dc2626 !important; 
+            box-shadow: 0 10px 15px -3px rgba(220, 38, 38, 0.4) !important; 
+            border: none !important;
+        }
+        .btn-primary:hover { background: #b91c1c !important; transform: translateY(-3px); }
+
+        .btn-christmas-sec {
+            background: rgba(255,255,255,0.1) !important;
+            color: white !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+        }
+        .btn-christmas-sec:hover { background: rgba(255,255,255,0.2) !important; }
+
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); }
+            100% { transform: translateY(110vh) rotate(360deg); }
+        }
+    </style>
 </head>
-<body>
-    <div class="container">
-        <header class="landing-header">
-            <h1>The Lazy Copypaste</h1>
-            <nav><a href="/dashboard.html" class="btn btn-secondary">Acessar Painel</a></nav>
+<body class="christmas-theme">
+    <div class="snowflakes" aria-hidden="true">
+        <div style="color: white; position: absolute; top: -10%; left: 10%; animation: fall 10s linear infinite;">❄</div>
+        <div style="color: white; position: absolute; top: -10%; left: 30%; animation: fall 12s linear infinite; animation-delay: 2s;">❅</div>
+        <div style="color: white; position: absolute; top: -10%; left: 50%; animation: fall 8s linear infinite; animation-delay: 1s;">❆</div>
+        <div style="color: white; position: absolute; top: -10%; left: 70%; animation: fall 11s linear infinite; animation-delay: 3s;">❄</div>
+        <div style="color: white; position: absolute; top: -10%; left: 90%; animation: fall 9s linear infinite; animation-delay: 0.5s;">❅</div>
+    </div>
+
+    <div class="container" style="position: relative; z-index: 1;">
+        <header class="landing-header" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <div class="logo-container">
+                <h1 style="color: #fff;">The Lazy Copypaste</h1>
+            </div>
+            <nav>
+                <a href="/dashboard.html" class="btn btn-christmas-sec">Acessar Painel</a>
+            </nav>
         </header>
+
         <section class="hero-section">
-            <h2 class="hero-title">Sua produtividade,<br><span style="color: var(--primary);">elevada ao máximo.</span></h2>
-            <p style="font-size: 1.2rem; color: var(--text-light); margin-bottom: 40px;">Gerenciador de textos local. Seus dados nunca saem do seu navegador.</p>
-            <div style="display: flex; gap: 15px; justify-content: center;">
-                <a href="/dashboard.html" class="btn btn-primary" style="padding: 15px 35px;">Começar Agora</a>
-                <a href="/about.html" class="btn btn-secondary" style="padding: 15px 35px;">Como funciona?</a>
+            <h2 class="hero-title">
+                Sua produtividade, <br>
+                <span>elevada ao máximo.</span>
+            </h2>
+            <p class="hero-subtitle">
+                O gerenciador de textos local definitivo. Seus snippets ficam guardados com segurança no seu navegador. Sem contas, sem nuvem, sem complicações.
+            </p>
+            
+            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 20px;">
+                <a href="/dashboard.html" class="btn btn-primary" style="padding: 20px 45px; font-size: 1.2rem;">
+                    Começar Agora 🎄
+                </a>
+                <a href="/about.html" class="btn btn-christmas-sec" style="padding: 20px 45px; font-size: 1.2rem;">
+                    Como funciona?
+                </a>
             </div>
         </section>
+
+        <footer style="text-align: center; padding: 60px 0; color: rgba(255,255,255,0.5); font-size: 0.9rem;">
+            <p>&copy; 2024 <strong>The Lazy Copypaste</strong>. Boas Festas! 🎁</p>
+        </footer>
     </div>
 </body>
 </html>
