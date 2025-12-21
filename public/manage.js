@@ -1,4 +1,4 @@
-// Função do Modal Blindada
+// Função do Modal (Mantida idêntica para não quebrar o que está bom)
 function showModal(title, text, confirmCallback = null) {
     const modal = document.getElementById('customModal');
     const modalTitle = document.getElementById('modalTitle');
@@ -114,8 +114,24 @@ async function initializeManagePage() {
 
     const fetchAndRender = async () => {
         const term = searchInput.value.toLowerCase();
-        let texts = await db.feedbacks.reverse().toArray();
-        if (term) texts = texts.filter(t => t.title.toLowerCase().includes(term) || t.text.toLowerCase().includes(term));
+        let texts = await db.feedbacks.toArray();
+
+        // ORDENAÇÃO NATURAL: Resolve o problema do Módulo 2 vs Módulo 13
+        texts.sort((a, b) => {
+            return a.title.localeCompare(b.title, undefined, {
+                numeric: true,
+                sensitivity: 'base'
+            });
+        });
+
+        // Se quiser que os números MAIORES apareçam primeiro, use: texts.reverse();
+
+        if (term) {
+            texts = texts.filter(t => 
+                (t.title && t.title.toLowerCase().includes(term)) || 
+                (t.text && t.text.toLowerCase().includes(term))
+            );
+        }
         renderTexts(texts);
     };
 
