@@ -1,4 +1,4 @@
-// Função do Modal (Mantida idêntica para não quebrar o que está bom)
+// Função do Modal (Mantida para manter a consistência)
 function showModal(title, text, confirmCallback = null) {
     const modal = document.getElementById('customModal');
     const modalTitle = document.getElementById('modalTitle');
@@ -48,13 +48,15 @@ async function initializeManagePage() {
         texts.forEach(item => {
             const div = document.createElement('div');
             div.className = 'feedback-item';
+            
+            // Criamos a estrutura sem colocar o texto no onclick para não quebrar
             div.innerHTML = `
                 <div class="item-header">
                     <h3 class="item-title">${item.title || 'Sem título'}</h3>
-                    <button class="btn btn-success" style="padding: 6px 12px; font-size: 0.8rem;" onclick="copyToClipboard('${item.text.replace(/'/g, "\\'").replace(/\n/g, "\\n")}', this)">Copiar</button>
+                    <button class="btn btn-success btn-copy-action" style="padding: 6px 12px; font-size: 0.8rem;">Copiar</button>
                 </div>
                 <div class="text-container text-collapsed" id="container-${item.id}">
-                    <div class="text-content">${item.text}</div>
+                    <div class="text-content"></div>
                     <div class="fade-overlay"></div>
                 </div>
                 <div class="actions">
@@ -63,6 +65,20 @@ async function initializeManagePage() {
                     <button class="btn btn-secondary" style="padding: 5px 10px; font-size: 0.75rem; color: #ef4444;" onclick="deleteText(${item.id})">Excluir</button>
                 </div>
             `;
+
+            // Inserimos o texto de forma segura para evitar quebra de layout
+            div.querySelector('.text-content').textContent = item.text;
+
+            // Configuramos o botão de copiar de forma isolada (Não quebra com aspas ou enter)
+            const copyBtn = div.querySelector('.btn-copy-action');
+            copyBtn.onclick = () => {
+                navigator.clipboard.writeText(item.text).then(() => {
+                    const oldText = copyBtn.textContent;
+                    copyBtn.textContent = 'Copiado!';
+                    setTimeout(() => copyBtn.textContent = oldText, 2000);
+                });
+            };
+
             textsContainer.appendChild(div);
         });
     };
@@ -72,14 +88,6 @@ async function initializeManagePage() {
         const isCollapsed = container.classList.contains('text-collapsed');
         container.classList.toggle('text-collapsed');
         btn.textContent = isCollapsed ? 'Ver menos' : 'Ver mais';
-    };
-
-    window.copyToClipboard = (text, btn) => {
-        navigator.clipboard.writeText(text).then(() => {
-            const oldText = btn.textContent;
-            btn.textContent = 'Copiado!';
-            setTimeout(() => btn.textContent = oldText, 2000);
-        });
     };
 
     window.deleteText = (id) => {
@@ -116,15 +124,12 @@ async function initializeManagePage() {
         const term = searchInput.value.toLowerCase();
         let texts = await db.feedbacks.toArray();
 
-        // ORDENAÇÃO NATURAL: Resolve o problema do Módulo 2 vs Módulo 13
         texts.sort((a, b) => {
             return a.title.localeCompare(b.title, undefined, {
                 numeric: true,
                 sensitivity: 'base'
             });
         });
-
-        // Se quiser que os números MAIORES apareçam primeiro, use: texts.reverse();
 
         if (term) {
             texts = texts.filter(t => 
@@ -138,4 +143,5 @@ async function initializeManagePage() {
     searchInput.addEventListener('input', fetchAndRender);
     fetchAndRender();
 }
+
 document.addEventListener('DOMContentLoaded', initializeManagePage);
